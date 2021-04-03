@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="laser_values" type="send_ranges.py" name="scan_values" output="screen">
+    </node>
+</launch>
