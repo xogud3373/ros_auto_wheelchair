@@ -1,0 +1,19 @@
+<launch>
+    <!-- Arguments -->
+   <arg name="open_rviz" default="true"/>
+
+    <include file="$(find wheelchair_bringup)/launch/wheelchair_remote.launch">
+    </include>
+    
+    <include file="$(find wheelchair_slam)/launch/wheelchair_gmapping.launch">
+    </include>
+    <!--
+    <node pkg="rviz" type="rviz" name="rviz" />
+    -->
+    
+    <!-- Rviz  -->
+    <group if="$(arg open_rviz)"> 
+        <node pkg="rviz" type="rviz" name="rviz" required="true"
+            args="-d $(find wheelchair_slam)/rviz/wheelchair_gmapping.rviz"/>
+    </group>
+</launch>

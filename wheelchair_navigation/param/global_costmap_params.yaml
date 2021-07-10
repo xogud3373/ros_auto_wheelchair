@@ -1,0 +1,14 @@
+global_costmap:
+  global_frame: map                      # 지도 프레임 설정
+  robot_base_frame: base_footprint       # 로봇 베이스 프레임 설정
+
+  update_frequency: 10.0                 # 갱신 주기
+  publish_frequency: 10.0                # 퍼블리시 주기
+  transform_tolerance: 0.5               # 변환 허용 시간
+
+  static_map: true                       # 주어진 지도를 사용하는 가에 대한 설정
+  
+  plugins:
+    - {name: static_layer,            type: "costmap_2d::StaticLayer"}
+    - {name: obstacle_layer,          type: "costmap_2d::VoxelLayer"}
+    - {name: inflation_layer,         type: "costmap_2d::InflationLayer"}

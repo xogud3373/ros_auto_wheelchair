@@ -1,0 +1,39 @@
+# obstacle_range: 3.0  # 물체가 로봇과 이 거리값에 해당되는 거리 안에 있을 때 장애물로 처리
+# raytrace_range: 3.5  # 센서값 중 이 거리 이상의 데이터는 자유공간으로 처리
+
+# footprint: [[-0.4657, -0.321], [-0.4657, 0.321], [0.6438, 0.321], [0.6438, -0.321]]  # 로봇의 외형 치수를 폴리곤 형태로 제공
+# ##robot_radius: 0.105   # 로봇이 원형일 때 로봇의 반지름
+
+# inflation_radius: 1.5  # 인플레이션 영역의 반지름으로 장애물에 접근 못하게 하는 영역
+# cost_scaling_factor: 3.0 # costmap 계산에서 사용하는 스케일링 변수
+
+# map_type: costmap  # 사용할 costmap을 voxel와 costmap 중에서 선택
+# observation_sources: filteredscan # 사용하는 센서 지정
+# scan: {sensor_frame: base_scan, data_type: LaserScan, topic: filteredscan, marking: true, clearing: true}
+
+##observation_sources: scan # 사용하는 센서 지정
+##scan: {sensor_frame: base_scan, data_type: LaserScan, topic: scan, marking: true, clearing: true}
+
+footprint: [[-0.4657, -0.321], [-0.4657, 0.321], [0.6438, 0.321], [0.6438, -0.321]]
+
+map_type: costmap
+
+obstacle_layer:
+  enabled:              true
+  track_unknown_space:  false     #true needed for disabling global path planning through unknown space
+  obstacle_range: 3.0             # 장애물 발견 범위
+  raytrace_range: 5.5             # 장애물 등장 후, clearing을 위한 다음 스캔 범위. 무조건 obstacle_range 보다 클 것.
+  #inflation_radius: 0.2
+  observation_sources: scan
+  scan: {sensor_frame: base_scan, data_type: LaserScan, topic: filteredscan, marking: true, clearing: true}
+  
+
+#cost_scaling_factor and inflation_radius were now moved to the inflation_layer ns
+inflation_layer:
+  enabled:              true
+  cost_scaling_factor:  3.0  # exponential rate at which the obstacle cost drops off (default: 10)
+  inflation_radius:     0.6  # 장애물의 팽창 반지름. 해당 반지름까지는 통과안함.
+
+ 
+static_layer:
+  enabled:              true

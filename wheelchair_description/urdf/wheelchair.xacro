@@ -1,48 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
-     Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
-     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
-<robot name="wheelchair_description">
-  <link
-    name="base_footprint">
-    <inertial>
-      <origin
-        xyz="-0.139991863457701 6.75733935251444E-07 0.437082883182207"
-        rpy="0 0 0" />
-      <mass
-        value="21.7057319989075" />
-      <inertia
-        ixx="0.453001300461825"
-        ixy="-3.8762258000081E-06"
-        ixz="-0.0193729845601956"
-        iyy="0.419651006065535"
-        iyz="3.60464949435846E-06"
-        izz="0.458469920465493" />
-    </inertial>
-    <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh
-          filename="package://wheelchair_description/meshes/base_footprint.STL" />
-      </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh
-          filename="package://wheelchair_description/meshes/base_footprint.STL" />
-      </geometry>
-    </collision>
+
+<robot name="wheelchair_description" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+  <xacro:include filename="$(find wheelchair_description)/urdf/wheelchair_materials.xacro"/>
+  
+  <link name="base_footprint">
   </link>
+  
   <link
     name="base_link">
     <inertial>
@@ -68,10 +32,7 @@
           filename="package://wheelchair_description/meshes/base_link.STL" />
       </geometry>
       <material
-        name="">
-        <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-      </material>
+        name="white"/>
     </visual>
     <collision>
       <origin
@@ -83,6 +44,7 @@
       </geometry>
     </collision>
   </link>
+  
   <joint
     name="base_joint"
     type="fixed">
@@ -96,6 +58,7 @@
     <axis
       xyz="0 0 0" />
   </joint>
+  
   <link
     name="caster_left_link">
     <inertial>
@@ -121,10 +84,7 @@
           filename="package://wheelchair_description/meshes/caster_left_link.STL" />
       </geometry>
       <material
-        name="">
-        <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-      </material>
+        name="orange"/>
     </visual>
     <collision>
       <origin
@@ -136,6 +96,7 @@
       </geometry>
     </collision>
   </link>
+  
   <joint
     name="caster_left_joint"
     type="continuous">
@@ -149,6 +110,7 @@
     <axis
       xyz="0 1 0" />
   </joint>
+  
   <link
     name="caster_right_link">
     <inertial>
@@ -174,10 +136,7 @@
           filename="package://wheelchair_description/meshes/caster_right_link.STL" />
       </geometry>
       <material
-        name="">
-        <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-      </material>
+        name="orange"/>
     </visual>
     <collision>
       <origin
@@ -189,6 +148,7 @@
       </geometry>
     </collision>
   </link>
+  
   <joint
     name="caster_right_joint"
     type="continuous">
@@ -202,6 +162,7 @@
     <axis
       xyz="0 1 0" />
   </joint>
+  
   <link
     name="wheel_left_link">
     <inertial>
@@ -227,10 +188,7 @@
           filename="package://wheelchair_description/meshes/wheel_left_link.STL" />
       </geometry>
       <material
-        name="">
-        <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-      </material>
+        name="orange"/>  
     </visual>
     <collision>
       <origin
@@ -242,6 +200,7 @@
       </geometry>
     </collision>
   </link>
+  
   <joint
     name="wheel_left_joint"
     type="continuous">
@@ -255,6 +214,7 @@
     <axis
       xyz="0 1 0" />
   </joint>
+  
   <link
     name="wheel_right_link">
     <inertial>
@@ -280,10 +240,7 @@
           filename="package://wheelchair_description/meshes/wheel_right_link.STL" />
       </geometry>
       <material
-        name="">
-        <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-      </material>
+        name="orange"/>
     </visual>
     <collision>
       <origin
@@ -295,6 +252,7 @@
       </geometry>
     </collision>
   </link>
+  
   <joint
     name="wheel_right_joint"
     type="continuous">
@@ -308,6 +266,7 @@
     <axis
       xyz="0 1 0" />
   </joint>
+  
   <link
     name="base_scan">
     <inertial>
@@ -333,10 +292,7 @@
           filename="package://wheelchair_description/meshes/base_scan.STL" />
       </geometry>
       <material
-        name="">
-        <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-      </material>
+        name="red"/>
     </visual>
     <collision>
       <origin
@@ -348,12 +304,13 @@
       </geometry>
     </collision>
   </link>
+  
   <joint
     name="scan_joint"
     type="fixed">
     <origin
-      xyz="0.18225 0 0.0548"
-      rpy="0 0 0" />
+      xyz="0.18225 0 0.1248"
+      rpy="0 0 3.14" />
     <parent
       link="base_link" />
     <child
@@ -361,4 +318,57 @@
     <axis
       xyz="0 0 0" />
   </joint>
+  
+  <link
+    name="imu_link">
+    <inertial>
+      <origin
+        xyz="0 -5.55111512312578E-17 -0.01"
+        rpy="0 0 0" />
+      <mass
+        value="0.072" />
+      <inertia
+        ixx="2.4E-05"
+        ixy="-3.5605380044786E-21"
+        ixz="2.82344315751437E-22"
+        iyy="2.4E-05"
+        iyz="-4.71673120121716E-22"
+        izz="4.32E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://wheelchair_description/meshes/imu_link.STL" />
+      </geometry>
+      <material
+        name="red" />
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://wheelchair_description/meshes/imu_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint
+    name="imu_joint"
+    type="fixed">
+    <origin
+      xyz="-0.030704 -0.0035475 0.034002"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="imu_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
 </robot>

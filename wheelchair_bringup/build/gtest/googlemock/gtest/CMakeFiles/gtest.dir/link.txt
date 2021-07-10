@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -g  -shared -Wl,-soname,libgtest.so -o libgtest.so CMakeFiles/gtest.dir/src/gtest-all.cc.o  -L/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_bringup/build/gtest/googlemock/gtest/src -Wl,-rpath,/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_bringup/build/gtest/googlemock/gtest/src -lpthread 

@@ -1,4 +1,0 @@
-<launch>
-    <node pkg="object_avoid" type="rplidar_wall_follow.py" name="wall_follow" output="screen">
-    </node>
-</launch>

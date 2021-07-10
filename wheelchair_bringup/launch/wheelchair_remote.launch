@@ -1,0 +1,21 @@
+<launch>
+  <!-- WHEELCHAIR URDF 호출-->
+  <include file="$(find wheelchair_description)/launch/description.launch"/>
+  
+  <!-- WHEELCHAIR ODOM PUBLISH-->
+  <include file="$(find wheelchair_pub_odom)/launch/odom.launch"/>
+
+  <!-- LIDAR FILTERING 
+  <node pkg="laser_filters" type="scan_to_scan_filter_chain" name="laser_filter" output="screen">
+      <rosparam command="load" file="$(find wheelchair_bringup)/config/scan_data_filter.yaml"/>
+  </node>
+  -->
+
+  <!-- Odom-IMU Extended Kalman Filter 
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+	  <rosparam command="load" file="$(find wheelchair_bringup)/config/robot_localization.yaml" />
+	  <remap from="odometry/filtered" to="odom" />
+  </node>
+  -->
+
+</launch>

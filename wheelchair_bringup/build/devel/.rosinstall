@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_bringup/build/devel/setup.sh
