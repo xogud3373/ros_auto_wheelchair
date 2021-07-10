@@ -1,0 +1,42 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/taehyung/catkin_ws/devel/include",
+        "/opt/ros/melodic/include",
+        "/home/taehyung/catkin_ws/src/smartcar_ws/src/costmap_prohibition_layer/include",
+        "/home/taehyung/catkin_ws/src/kalman_filters_files/ekf_ukf/include",
+        "/home/taehyung/catkin_ws/src/hls_lfcd_lds_driver/include",
+        "/home/taehyung/catkin_ws/src/laser_filters/include",
+        "/home/taehyung/catkin_ws/src/MW-AHRSv1-RS232-communicate/include",
+        "/home/taehyung/catkin_ws/src/my_first_ros_pkg/include",
+        "/home/taehyung/catkin_ws/src/odom_mobilerobot/odom_mobilerobot/include",
+        "/home/taehyung/catkin_ws/src/open_door_detect/include",
+        "/home/taehyung/catkin_ws/src/prac_twist/include",
+        "/home/taehyung/catkin_ws/src/robot_localization/include",
+        "/home/taehyung/catkin_ws/src/ros_tutorials_service/include",
+        "/home/taehyung/catkin_ws/src/ros_tutorials_topic/include",
+        "/home/taehyung/catkin_ws/src/smartcar_ws/src/smartcar_odom_publisher/include",
+        "/home/taehyung/catkin_ws/src/smartcar_ws/src/smartcar_tf_publisher/include",
+        "/home/taehyung/catkin_ws/src/test_turtlebot/test_bringup/include",
+        "/home/taehyung/catkin_ws/src/test_turtlebot/test_turtlebot3_navigation/include",
+        "/home/taehyung/catkin_ws/src/test_turtlebot/test_turtlebot3_slam/include",
+        "/home/taehyung/catkin_ws/src/turtlebot3_simulations/turtlebot3_fake/include",
+        "/home/taehyung/catkin_ws/src/turtlebot3_simulations/turtlebot3_gazebo/include",
+        "/home/taehyung/catkin_ws/src/turtlebot3/turtlebot3_slam/include",
+        "/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_bringup/include",
+        "/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_door/include",
+        "/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_imu/include",
+        "/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_navigation/include",
+        "/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_pub_odom/include",
+        "/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_slam/include",
+        "/usr/include"
+      ],
+      "name": "Linux"
+    }
+  ]
+}
