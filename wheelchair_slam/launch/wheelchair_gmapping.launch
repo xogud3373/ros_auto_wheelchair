@@ -4,10 +4,12 @@
  <arg name="set_map_frame" default="map"/>
  <arg name="scan_topic" default="scan_filtered"/>
 
-  <!-- LiDAR FILTERING --> 
+  <!-- LiDAR FILTERING 
  <node pkg="laser_filters" type="scan_to_scan_filter_chain" name="laser_filter" output="screen">
     <rosparam command="load" file="$(find wheelchair_bringup)/config/scan_data_filter.yaml"/>
   </node>
+ --> 
+
  
  <!-- GMAPPING --> 
  <node pkg="gmapping" type="slam_gmapping" name="wheelchair_slam_gmapping" output="screen">

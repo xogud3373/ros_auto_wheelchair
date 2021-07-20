@@ -1,0 +1,20 @@
+local_costmap:
+  global_frame: odom                     # 지도 프레임 설정
+  robot_base_frame: base_footprint       # 로봇 베이스 프레임 설정
+  map_type: costmap
+
+  update_frequency: 10.0                 # 갱신주기
+  publish_frequency: 10.0                # 퍼블리시 주기
+  transform_tolerance: 1.0               # 변환 허용 시간
+
+#10,10,0.5
+
+  static_map: false                      # 주어진 지도를 사용하는 가에 대한 설정
+  rolling_window: true                   # 국부 지도 창 설정
+  width: 4                               # 국부지도 창의 넓이
+  height: 4                              # 국부지도 창의 높이
+  resolution: 0.05                       # 국부지도 창의 해상도
+  
+  plugins:
+    - {name: obstacle_layer,      type: "costmap_2d::ObstacleLayer"}
+    - {name: inflation_layer,     type: "costmap_2d::InflationLayer"}

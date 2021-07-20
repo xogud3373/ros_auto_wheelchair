@@ -1,0 +1,85 @@
+TebLocalPlannerROS:
+
+ odom_topic: odom
+ map_frame: /odom
+    
+ # Trajectory
+  
+ teb_autosize: True                                 # true로 설정하면 자동 크기 조정이 발생
+ dt_ref: 0.3                                        # 궤적의 원하는 시간적 해상도 -> 해당 해상도에 맞춰서 두 개의 연속 포즈를 각각 정렬하는 것을 목표
+ dt_hysteresis: 0.1                                 # 현재 시간 해상도에 따라 자동 크기 조정을 위한 히스테리시스
+ global_plan_overwrite_orientation: true            # 글로벌 플래너가 제공하는 로컬 하위 목표의 방향 덮어쓰기
+ max_global_plan_lookahead_dist: 3.0                # 최적화를 위해 고려되는 전역 계획 하위 집합의 최대 길이 지정
+ feasibility_check_no_poses: 5                      # 예측 된 계획에서 각 샘플링 간격마다 실행 가능성을 확인해야하는 포즈
+ #force_reinit_new_goal_angular: 1.0                 # 이전 목표가 미터 단위로 지정된 값 이상으로 분리되어 업데이트되면 플래너가 궤적을 다시 초기화함
+ #force_reinit_new_goal_angular: 0.78                # 이전 목표가 지정된 라디안 값보다 큰 회전 차이로 업데이트 된 경우 플래너가 궤적을 다시 초기화함
+ 
+ # ViaPoints
+ global_plan_viapoint_sep : -0.1
+    
+ # Robot
+         
+ max_vel_x: 0.45                                      # 로봇의 최대 병진속도
+ max_vel_x_backwards: 0.3                            # 뒤로 이동하는 동안 로봇의 최대 절대 병진속도
+ max_vel_theta: 1.0                                  # 로봇의 최대 각속도
+ acc_lim_x: 0.5                                      # 로봇의 최대 병진 가속도
+ acc_lim_theta: 1.1                                  # 로봇의 최대 각가속도
+ min_turning_radius: 0.0                             # 자동차 같은 로봇의 최대 회전 반경 ( 차동 구동 로봇의 경우 0 으로 설정 )
+ footprint_model: 
+   type: "line" # line, polygon                      # polygon으로 하면 연산량 증가. 0.2초정도 더 증가함.
+   line_start: [-0.4657, 0.0] # for type "line"
+   line_end: [0.6438, 0.0] # for type "line"
+   vertices: [[-0.4657, -0.321], [-0.4657, 0.321], [0.6438, 0.321], [0.6438, -0.321]] 
+
+ # GoalTolerance
+    
+ xy_goal_tolerance: 0.2                               # 목표 위치에서 로봇 위치의 최대 허용 편차
+ yaw_goal_tolerance: 1                              # 목표 방향에서 로봇 방향의 최대 허용 각도 편차
+ free_goal_vel: False                                 # false로 설정하면 목표 속도 제약이 제거되어 로봇이 최대 속도로 목표에 도달할 수 있다.
+    
+ # Obstacles
+ #0.6   
+ min_obstacle_dist: 0.6                           # 장애물과의 거리 -> 경로생성이 이 거리만큼 떨어짐(meter)
+ include_costmap_obstacles: True                  # 로컬 맵의 장애물을 고려해야하는지 여부. 장애물로 표시된 셀은 장애물로 간주( 무조건 true )
+ include_dynamic_obstacles: False                 # 로컬 맵에 등장하는 장애물이 동적 장애물일 수도 있다고 판단
+ costmap_obstacles_behind_robot_dist: 1.0         # 경로 계획 시 로봇 뒤에 점유 되는 로컬 코스트맵 장애물 거리 제한 ( meter )
+ obstacle_poses_affected: 30                      # 거리를 유지하기 위해 각 장애물위치는 궤적에서 가장 가까운 포즈에 연결된다.
+ 
+ # Costmap_converter
+
+ #costmap_converter_plugin: ""
+ #costmap_converter_spin_thread: True
+ #costmap_converter_rate: 5
+
+ # Optimization
+    
+ no_inner_iterations: 5                           # 연산 속도에 영향을 미침. 
+ no_outer_iterations: 4                           # 연산 속도에 영향을 미침
+ optimization_activate: True
+ optimization_verbose: False
+ penalty_epsilon: 0.1
+ weight_max_vel_x: 2                              # 최대 허용 병진 속도 충족을 위한 최적화 가중치
+ weight_max_vel_theta: 1                          # 최대 허용 각속도 만족을 위한 최적화 가중치
+ weight_acc_lim_x: 1                              # 최대 허용 번역 가속도를 충족하기 위한 최적화 가중치
+ weight_acc_lim_theta: 1                          # 최대 허용 각가속도를 충족하기 위한 최적화 가중치
+ weight_kinematics_nh: 1000                       # 비 홀로노믹 운동학을 충족하기 위한 최적화 가중치
+ weight_kinematics_forward_drive: 1000               # 로봇이 전진방향만 선택하도록 강제하는 최적화 가중치( 1 이면 후진가능, 1000이면 전진만 )
+ weight_kinematics_turning_radius: 1              # 최소 횢전 반경을 적용하기 위한 최적화 중량( 자동차 같은 로봇에만 해당 )
+ weight_optimaltime: 1
+ weight_obstacle: 50                              # 장애물로부터 최소 거리를 유지하기 위한 최적화 무게
+ weight_dynamic_obstacle: 10 # not in use yet
+ alternative_time_cost: False # not in use yet
+
+ # Homotopy Class Planner
+
+ enable_homotopy_class_planning: True             # 경로 생성을 homotopy_class를 활용해서 할 것인지 -> 연산 속도에 영향을 줌
+ enable_multithreading: True
+ simple_exploration: False
+ max_number_classes: 2                            # teb local 경로 생성을 몇가지로 제한할 것인지.
+ roadmap_graph_no_samples: 15
+ roadmap_graph_area_width: 5
+ h_signature_prescaler: 0.5
+ h_signature_threshold: 0.1
+ obstacle_keypoint_offset: 0.1
+ obstacle_heading_threshold: 0.45
+ visualize_hc_graph: False

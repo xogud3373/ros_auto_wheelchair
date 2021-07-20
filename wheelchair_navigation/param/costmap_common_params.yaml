@@ -25,7 +25,8 @@ obstacle_layer:
   raytrace_range: 5.5             # 장애물 등장 후, clearing을 위한 다음 스캔 범위. 무조건 obstacle_range 보다 클 것.
   #inflation_radius: 0.2
   observation_sources: scan
-  scan: {sensor_frame: base_scan, data_type: LaserScan, topic: filteredscan, marking: true, clearing: true}
+  #scan: {sensor_frame: base_scan, data_type: LaserScan, topic: filteredscan, marking: true, clearing: true}
+  scan: {sensor_frame: base_scan, data_type: LaserScan, topic: scan_filtered, marking: true, clearing: true}
   
 
 #cost_scaling_factor and inflation_radius were now moved to the inflation_layer ns

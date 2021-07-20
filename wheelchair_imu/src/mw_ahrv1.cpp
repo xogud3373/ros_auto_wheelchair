@@ -3,6 +3,7 @@
 #include <sensor_msgs/Imu.h>
 #include <tf/transform_broadcaster.h>
 #include "Serial.h"
+#include <wheelchair_msg/door.h>
 
 #define PI 3.14159265
 #define BUFFER_SIZE 200
@@ -36,6 +37,7 @@ public:
             cout << " Error opening port\n" << endl;
         }
         
+        server =  nh.advertiseService("imu_flag_service", &MW_AHRS::doorCallback, this);
         // Eulur 초기화 ( Yaw 드리프트 초기화 )
         /*
         Tx[0] = 0x63;     // c
@@ -48,37 +50,14 @@ public:
 
         write(dev,Tx,7);
         */
-        
-        // ss=7 동기화 데이터 전송 -> 데이터 게속 보냄    
-        
-        /*
-        Tx[0] = 'S';        // s
-        Tx[1] = 'S';        // s
-        Tx[2] = '=';     // =
-        Tx[3] = '7';     // 7
-        Tx[4] = '\r';       // CR
-        Tx[5] = '\n';       // LF
-        */
+    
        strcpy((char *)Tx,"SS=7\r\n");
        write(dev,Tx,strlen((char *)Tx));
         
 
-        // sp = 100 데이터 전송속도 변경
-        /*
-        Tx[0] = S;        // s
-        Tx[1] = P;        // p
-        Tx[2] = 0x3D;     // =
-        Tx[3] = 0x31;     // 1
-        Tx[4] = 0x30;     // 0
-        Tx[5] = 0x30;     // 0
-        Tx[6] = CR;       // CR
-        Tx[7] = LF;       // LF
-        */
-
        strcpy((char *)Tx,"SP=20\r\n");// unit ms
        write(dev,Tx,strlen((char *)Tx));
 
-        //        write(dev,Tx,strlen((char *)Tx));
     }
 
     ~MW_AHRS()
@@ -86,19 +65,16 @@ public:
         close_serial(dev);
     }
 
+    bool doorCallback(wheelchair_msg::door::Request &req, wheelchair_msg::door::Response &res)
+    {
+        res.calc_door_flag = true;
+        strcpy((char *)Tx,"cmd=5\r\n");
+        write(dev,Tx,strlen((char *)Tx));
+        return true;
+    }
+
     void seperate_imu_data(char *recData)
     {
-        // printf("%05d, L:%3d - %s\r\n"
-        //     , PackCnt
-        // //    , strlen((char*)buffer)
-        //     , buffer_tail_Index
-        //     , buffer
-        // );
-        //cout<<buffer;
-        //cout<<recData;
-        // PackCnt++;
-        // PackCnt %= 1000;
-
         
         Imu_data lImuDarta;
         int dataCnt =0;
@@ -118,92 +94,13 @@ public:
             if(dataCnt == 9)
             {
                 memcpy(&imu_data, &lImuDarta, sizeof(lImuDarta));
-                // cout << "Acc :" 
-                //     << imu_data.ax << " " 
-                //     << imu_data.ay << " " 
-                //     << imu_data.az << "\t"
-                //     ;
-                // cout << "Gyro :" 
-                //     << imu_data.gx << " " 
-                //     << imu_data.gy << " " 
-                //     << imu_data.gz << "\t"
-                //     ;
-                // cout << "Euler :" 
-                //     << imu_data.roll << " " 
-                //     << imu_data.pitch << " " 
-                //     << imu_data.yaw << "\r\n"
-                //     ;
 
             }
             else
             {
                 cout << "Err\r\n";
             }
-            /*
-        char *ptr = strtok(recData, " ");
-        null_count=0;
-
-        while(ptr != NULL)
-        {
-            if(null_count == 0)
-            {
-                imu_data.ax = atof(ptr);
-                cout << "ax = " << imu_data.ax;
-            }
-            else if(null_count == 1)
-            {
-                imu_data.ay = atof(ptr);
-                cout << " ay = " << imu_data.ay;
-            }
-            else if(null_count == 2)
-            {
-                imu_data.az = atof(ptr);
-                cout << " az = " << imu_data.az;
-            }
-            else if(null_count == 3)
-            {
-                imu_data.gx = atof(ptr);
-                cout << " gx = " << imu_data.gx;
-            }
-            else if(null_count == 4)
-            {
-                imu_data.gy = atof(ptr);
-                cout << " gy = " << imu_data.gy;
-            }
-            else if(null_count == 5)
-            {
-                imu_data.gz = atof(ptr);
-                cout << " gz = " << imu_data.gz;
-            }
-            else if(null_count == 6)
-            {
-                imu_data.roll = atof(ptr);
-                cout << " roll = " << imu_data.roll;
-            }
-            else if(null_count == 7)
-            {
-                imu_data.pitch = atof(ptr);
-                cout << " pitch = " << imu_data.pitch;
-            }
-            else if(null_count == 8)
-            {
-                imu_data.yaw = atof(ptr);
-                cout << " yaw = " << imu_data.yaw << endl;
-            }
-            else if(null_count == 9)
-            {
-                error_cnt++;
-                if(error_cnt >= 5) 
-                {
-                    //cout << "OVER NULL ERROR !!!"  << endl;
-                
-                }
-
-            }
-            null_count++;
-            ptr = strtok(NULL, " ");
-        }
-            */
+       
     }
 
     void get_data(void)
@@ -214,12 +111,6 @@ public:
         buffer_tail_Index += length;
 
         
-        //  skip_cnt++;
-        //ROS_INFO("length : %d",length);
-        
-        
-         // if(skip_cnt > 10)
-        
         if( (length==0) && (buffer_tail_Index >= 82))
         {
             memcpy(lrecData, buffer, sizeof(buffer));
@@ -228,17 +119,8 @@ public:
 
             seperate_imu_data(lrecData);
             pulishIMUtopic();
-        }
-        //    if(skip_cnt > 254) skip_cnt = 10;
 
-        /*
-        if(skip_cnt > 10 && length == 82)
-        {
-            seperate_imu_data();
-            pulishIMUtopic();
-            if(skip_cnt > 254) skip_cnt = 10;
         }
-        */
         
     }
 
@@ -304,8 +186,9 @@ public:
 
 private:
     ros::NodeHandle nh;
-    //ros::Publisher imu_pub = nh.advertise<sensor_msgs::Imu>("wheelchair_imu", 1);    
-    ros::Publisher imu_pub = nh.advertise<sensor_msgs::Imu>("imu/data_raw", 1);    
+    ros::Publisher imu_pub = nh.advertise<sensor_msgs::Imu>("imu/data_raw", 1);
+    ros::ServiceServer server;
+
     Imu_data imu_data{};
     
     // Device Name
@@ -349,6 +232,7 @@ int main(int argc, char **argv)
     {
         ahrs_obj.get_data();
         loop_rate.sleep();
+        ros::spinOnce();
     }
 
     return 0;

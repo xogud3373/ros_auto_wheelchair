@@ -1,0 +1,11 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="open_rviz" default="true"/>
+  
+  <!-- Rviz  -->
+  <group if="$(arg open_rviz)"> 
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find wheelchair_navigation)/rviz/door_dwa_navi.rviz"/>
+  </group>
+ 
+</launch>

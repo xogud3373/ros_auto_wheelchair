@@ -1,0 +1,8 @@
+prefix=/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_slam/build/devel
+
+Name: wheelchair_slam
+Description: Description of wheelchair_slam
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -38,7 +38,8 @@ int main(int argc, char** argv)
     ros::Subscriber lencoder_sub = nh.subscribe("encoder_lpulse", 10, lencoderCallback);
     ros::Subscriber rencoder_sub = nh.subscribe("encoder_rpulse", 10, rencoderCallback);
     //ros::Subscriber imu_sub = nh.subscribe("wheelchair_imu", 10, imuCallback);
-    ros::Subscriber imu_sub = nh.subscribe("imu/data", 10, imuCallback);
+    //imu/data 에서 imu/data_raw 바꿔봤음 다시 바꿀것안되면
+    ros::Subscriber imu_sub = nh.subscribe("imu/data_raw", 10, imuCallback);
     
     tf::TransformBroadcaster odom_broadcaster;
 

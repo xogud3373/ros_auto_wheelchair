@@ -1,4 +1,9 @@
 <launch>
-  <!-- WHEELCHAIR ODOM PUBLISH-->
+  <!-- WHEELCHAIR ODOM ENCODER + IMU PUBLISH -->
   <node pkg="wheelchair_pub_odom" type="wheelchair_odometry_imu_pub" name="odom" output="screen"/>
+  
+
+  <!-- WHEELCHAIR ODOM ENCODER  PUBLISH
+  <node pkg="wheelchair_pub_odom" type="wheelchair_odometry_pub" name="odom" output="screen"/>
+  -->
 </launch>

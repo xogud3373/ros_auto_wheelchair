@@ -5,7 +5,6 @@ global_costmap:
   update_frequency: 10.0                 # 갱신 주기
   publish_frequency: 10.0                # 퍼블리시 주기
   transform_tolerance: 0.5               # 변환 허용 시간
-
   static_map: true                       # 주어진 지도를 사용하는 가에 대한 설정
   
   plugins:

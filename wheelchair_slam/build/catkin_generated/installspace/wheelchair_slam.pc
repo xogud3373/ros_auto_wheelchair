@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: wheelchair_slam
+Description: Description of wheelchair_slam
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

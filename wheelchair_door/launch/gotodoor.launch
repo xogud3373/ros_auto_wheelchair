@@ -1,0 +1,10 @@
+<launch>
+  <!-- WHEELCHAIR DOOR DETECTION -->
+  <node pkg="wheelchair_door" type="door.py" name="detect_door" output="screen"/>
+    
+  <!-- WHEELCHAIR GO TO DOOR
+  <node pkg="wheelchair_door" type="door_send_goals" name="door_send_goals" output="screen"/>
+-->
+  <node pkg="wheelchair_door" type="door_action_goals" name="door_action_goals" output="screen"/>
+
+</launch>

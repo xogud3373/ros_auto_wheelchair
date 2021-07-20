@@ -2,5 +2,7 @@ scan_filter_chain:
 - name: AngularBoundsFilter
   type: laser_filters/LaserScanAngularBoundsFilterInPlace
   params:
-    lower_angle: -0.87
-    upper_angle: 0.87
+    lower_angle: -1.22
+    upper_angle: 0.52
+
+# -70 ~ 30도 필터링

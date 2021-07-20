@@ -1,0 +1,3 @@
+bool imu_clear_flag
+---
+bool calc_door_flag
