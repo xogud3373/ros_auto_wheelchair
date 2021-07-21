@@ -4,8 +4,10 @@ import sys
 import rospy
 import math
 from sensor_msgs.msg import LaserScan
-from wheelchair_door.msg import doorpos
-from wheelchair_door.srv import doorinfo, doorinfoResponse
+from wheelchair_msg.msg import doormsg
+from wheelchair_msg.srv import door_mode, door_modeResponse
+# from wheelchair_door.msg import doorpos
+# from wheelchair_door.srv import doorinfo, doorinfoResponse
 
 MAX_LIDAR_ANGLE = 3.14159274101
 
@@ -14,25 +16,37 @@ lidar_ranges = []
 left_inf_index = []
 index_even_count_odd = []
 count = 0
-mode = 	2
+mode = 	0
+sub_mode = 0
 is_door_cnt = 0
 sum_door = 0
 sum_x = 0
 sum_y = 0
+publish_cnt = 0
 
-send_flag = True
+send_flag = False
+door_scan_flag = False
 
 lidar_pub = rospy.Publisher('/door_lidar', LaserScan, queue_size=1)
 scann = LaserScan()    
-door_pub = rospy.Publisher('/door_pos', doorpos, queue_size=1)
-pos = doorpos()
+door_pub = rospy.Publisher('/door_pos', doormsg, queue_size=1)
+pos = doormsg()
 
 
-# service_server = rospy.Service('doorinfo',doorinfo,doorCallback)
 
-# def doorCallback(request):
-#     if request.clk_door_flag == True:
-#         response = doorinfoResponse()
+
+def door_modeCallback(request):
+    global mode, door_scan_flag, send_flag, sub_mode
+    if request.door_req_flag == True:
+        
+        mode = request.door_mode
+        sub_mode = request.sub_door_mode
+        door_scan_flag = True
+        send_flag = True
+        
+        response = door_modeResponse()
+        response.door_res_flag = True
+        return True 
 
 
 def clbk_laser(msg):
@@ -52,13 +66,14 @@ def clbk_laser(msg):
         lidar_angle_increment += msg.angle_increment  # 0.0174532923847
         
     # 문 판별 함수 시작
-    Is_door_check(scann)
+    if door_scan_flag == True:
+        Is_door_check(scann)
 
 # 라이다 추출 거리 값이 5m 이상이면 inf 값으로 대치 
 def lidar_5m_over_delete(mode):
     global lidar_ranges
     
-    if mode == 0:     # front
+    if mode == 1:     # front
         for i in range(0, 90):
             if lidar_ranges[i] > 5:
                 lidar_ranges[i] = float('inf')
@@ -66,12 +81,12 @@ def lidar_5m_over_delete(mode):
             if lidar_ranges[j] > 5:
                 lidar_ranges[j] = float('inf')
 
-    elif mode == 1:   # left
+    elif mode == 2:   # left
         for i in range(0, 135):
             if lidar_ranges[i] > 5:
                 lidar_ranges[i] = float('inf')
 
-    elif mode == 2:   # right
+    elif mode == 3:   # right
         for i in range(225, 360):
             if lidar_ranges[i] > 5:
                 lidar_ranges[i] = float('inf')
@@ -81,7 +96,7 @@ def lidar_5m_over_delete(mode):
 def lidar_inf_diff_80cm(mode):
     global lidar_ranges
 
-    if mode == 0:
+    if mode == 1:
         for i in range(0, 90):
             if lidar_ranges[i] == float('inf'):
                 if i == 89:
@@ -99,7 +114,7 @@ def lidar_inf_diff_80cm(mode):
                     lidar_ranges[i] = (lidar_ranges[i - 1] + lidar_ranges[i + 1])/2
         
 
-    elif mode == 1:
+    elif mode == 2:
         for i in range(0, 135):
             if lidar_ranges[i] == float('inf'):
                 if i == 134:
@@ -108,7 +123,7 @@ def lidar_inf_diff_80cm(mode):
                 if abs(lidar_ranges[i - 1] - lidar_ranges[i +1]) < 0.8:
                     lidar_ranges[i] = (lidar_ranges[i - 1] + lidar_ranges[i + 1])/2
 
-    elif mode == 2:
+    elif mode == 3:
         for i in range(225, 360):
             if lidar_ranges[i] == float('inf'):
                 if i == 359:
@@ -124,7 +139,7 @@ def lidar_left_inf_index_save(mode):
     global left_inf_index
     left_inf_index = []
 
-    if mode == 0:
+    if mode == 1:
         for i in range(0, 90):
             if lidar_ranges[i] == float('inf'):
                 left_inf_index.append(i)
@@ -132,12 +147,12 @@ def lidar_left_inf_index_save(mode):
             if lidar_ranges[i] == float('inf'):
                 left_inf_index.append(i)
 
-    elif mode == 1:
+    elif mode == 2:
         for i in range(0, 135):
             if lidar_ranges[i] == float('inf'):
                 left_inf_index.append(i)
 
-    elif mode == 2:
+    elif mode == 3:
         for i in range(225, 360):
             if lidar_ranges[i] == float('inf'):
                 left_inf_index.append(i)
@@ -211,144 +226,44 @@ def lidar_left_inf_trans(mode):
 
 
 def Is_door_check(scann):
-    global count, lidar_ranges, mode, is_door_cnt, sum_door, sum_x, sum_y, pos, send_flag
+    global count, lidar_ranges, mode, is_door_cnt, sum_door, sum_x, sum_y, pos, send_flag, publish_cnt
+
     count += 1
-    # print("-----------------------")
-    # print("몇번 돌았냐면 : %d "%count)
-
-    # print("--------before---------")
-    # print(lidar_ranges)
-
+    
+   
     lidar_5m_over_delete(mode)
-    #print("11111111after1111111111")
-    #print(lidar_ranges)
-    
     lidar_inf_diff_80cm(mode)
-    #print("22222222after2222222222")
-    #print(lidar_ranges)
-    
     lidar_left_inf_index_save(mode)
     lidar_left_inf_seperate(mode)
     lidar_left_inf_trans(mode)
-    #print("333333333after333333333")
-    #print(lidar_ranges)
     
     scann.ranges = lidar_ranges
     lidar_pub.publish(scann)
 
 
-    if mode == 0:
-        check_0_90_flag = False
-
-        for first_door_idx in range(0, 90):
-            if first_door_idx == 89:
-                break
-            if lidar_ranges[first_door_idx + 1] > lidar_ranges[first_door_idx] + 1:
-                for second_door in range(first_door_idx + 5, 90):
-                    if second_door ==  89:
-                        break
-                    if lidar_ranges[second_door + 1] < lidar_ranges[second_door] - 0.8:
-                        second_door_idx = second_door + 1
-                            
-                        # 문틀 폭 계산 함수
-                        door_width = Calc_Door_Width(first_door_idx,second_door_idx, 1)
-                        if door_width > 0.7 and door_width < 1.0:
-                            is_door_cnt = is_door_cnt + 1
-                            
-                            
-                            cor_first_door_idx, cor_second_door_idx = Open_Door_Filtering(first_door_idx, second_door_idx)
-                            door_width = Calc_Door_Width(cor_first_door_idx, cor_second_door_idx, 1)
-                            door_center_x, door_center_y  = Calc_Door_Pos(cor_first_door_idx, cor_second_door_idx, 0, door_width)    
-                            
-                            sum_x +=door_center_x
-                            sum_y += door_center_y
-                            sum_door += door_width
-                            if is_door_cnt == 10:
-                                avg_door_width = sum_door / 10
-                                avg_pos_x = sum_x / 10
-                                avg_pos_y = sum_y / 10
-                                is_door_cnt = 0
-                                sum_door = 0
-                                sum_x = 0
-                                sum_y = 0
-                                
-                                pos.x_pos = avg_pos_x
-                                pos.y_pos = avg_pos_y
-                                pos.door_width = avg_door_width
-                                pos.send_data_flag = send_flag
-                                door_pub.publish(pos)
-                                send_flag = False
-                            
-                            break     
-                        else:
-                            pass
-                            print("문1X")
-                            
-        
-        for first_door_idx in range(270, 360):
-            if first_door_idx == 359:
-                break
-            if lidar_ranges[first_door_idx + 1] > lidar_ranges[first_door_idx] + 1:
-                for second_door in range(first_door_idx + 5, 360):
-                    if second_door ==  359:
-                        check_0_90_flag = True
-                        break
-                    if lidar_ranges[second_door + 1] < lidar_ranges[second_door] - 0.8:
-                        second_door_idx = second_door + 1
-                            
-                        # 문틀 폭 계산 함수
-                        door_width = Calc_Door_Width(first_door_idx, second_door_idx, 1)
-                        if door_width > 0.7 and door_width < 1.0:
-                            is_door_cnt = is_door_cnt + 1
-
-                           
-                            cor_first_door_idx, cor_second_door_idx = Open_Door_Filtering(first_door_idx, second_door_idx)
-                            door_width = Calc_Door_Width(cor_first_door_idx, cor_second_door_idx, 1)
-                            door_center_x, door_center_y  = Calc_Door_Pos(cor_first_door_idx, cor_second_door_idx, 0, door_width)    
-                            
-                            sum_x +=door_center_x
-                            sum_y += door_center_y
-                            sum_door += door_width
-                            if is_door_cnt == 10:
-                                avg_door_width = sum_door / 10
-                                avg_pos_x = sum_x / 10
-                                avg_pos_y = sum_y / 10
-                                is_door_cnt = 0
-                                sum_door = 0
-                                sum_x = 0
-                                sum_y = 0
-                                
-                                pos.x_pos = avg_pos_x
-                                pos.y_pos = avg_pos_y
-                                pos.door_width = avg_door_width
-                                pos.send_data_flag = send_flag
-                                door_pub.publish(pos)
-                                send_flag = False
-
-                            break     
-                        else:
-                            pass
-                            print("문2X")
-                            
-
-                if check_0_90_flag == True:
-                    for second_door in range(0, 90):
+    if mode == 1:
+        if sub_mode == 1:
+            for first_door_idx in range(0, 90):
+                if first_door_idx == 89:
+                    break
+                if lidar_ranges[first_door_idx + 1] > lidar_ranges[first_door_idx] + 1:
+                    for second_door in range(first_door_idx + 5, 90):
                         if second_door ==  89:
-                            check_0_90_flag = False
                             break
                         if lidar_ranges[second_door + 1] < lidar_ranges[second_door] - 0.8:
                             second_door_idx = second_door + 1
                                 
                             # 문틀 폭 계산 함수
-                            door_width = Calc_Door_Width(first_door_idx, second_door_idx, 2)
-                            if door_width > 0.7 and door_width < 1.2:
+                            door_width = Calc_Door_Width(first_door_idx,second_door_idx, 1)
+                            if door_width > 0.7 and door_width < 1.0:
                                 is_door_cnt = is_door_cnt + 1
-
+                                
                                 
                                 cor_first_door_idx, cor_second_door_idx = Open_Door_Filtering(first_door_idx, second_door_idx)
                                 door_width = Calc_Door_Width(cor_first_door_idx, cor_second_door_idx, 1)
-                                door_center_x, door_center_y  = Calc_Door_Pos(cor_first_door_idx, cor_second_door_idx, 0, door_width)    
-                                                        
+                                door_center_x, door_center_y  = Calc_Door_Pos(cor_first_door_idx, cor_second_door_idx, 1, door_width)    
+                                
+                                
                                 sum_x +=door_center_x
                                 sum_y += door_center_y
                                 sum_door += door_width
@@ -365,20 +280,119 @@ def Is_door_check(scann):
                                     pos.y_pos = avg_pos_y
                                     pos.door_width = avg_door_width
                                     pos.send_data_flag = send_flag
+                                    pos.door_loc = 1
                                     door_pub.publish(pos)
                                     send_flag = False
+                                
+                                break     
+                            else:
+                                pass
+                                
+                                
+        if sub_mode == 2:
+            for first_door_idx in range(270, 360):
+                if first_door_idx == 359:
+                    break
+                if lidar_ranges[first_door_idx + 1] > lidar_ranges[first_door_idx] + 1:
+                    for second_door in range(first_door_idx + 5, 360):
+                        if second_door ==  359:
+                            check_0_90_flag = True
+                            break
+                        if lidar_ranges[second_door + 1] < lidar_ranges[second_door] - 0.8:
+                            second_door_idx = second_door + 1
+                                
+                            # 문틀 폭 계산 함수
+                            door_width = Calc_Door_Width(first_door_idx, second_door_idx, 1)
+                            if door_width > 0.7 and door_width < 1.0:
+                                is_door_cnt = is_door_cnt + 1
 
-                                check_0_90_flag = False
+                            
+                                cor_first_door_idx, cor_second_door_idx = Open_Door_Filtering(first_door_idx, second_door_idx)
+                                door_width = Calc_Door_Width(cor_first_door_idx, cor_second_door_idx, 1)
+                                door_center_x, door_center_y  = Calc_Door_Pos(cor_first_door_idx, cor_second_door_idx, 1, door_width)    
+                                
+                                sum_x +=door_center_x
+                                sum_y += door_center_y
+                                sum_door += door_width
+                                if is_door_cnt == 10:
+                                    avg_door_width = sum_door / 10
+                                    avg_pos_x = sum_x / 10
+                                    avg_pos_y = sum_y / 10
+                                    is_door_cnt = 0
+                                    sum_door = 0
+                                    sum_x = 0
+                                    sum_y = 0
+                                    
+                                    pos.x_pos = avg_pos_x
+                                    pos.y_pos = avg_pos_y
+                                    pos.door_width = avg_door_width
+                                    pos.send_data_flag = send_flag
+                                    pos.door_loc = 1
+                                    door_pub.publish(pos)
+                                    
+                                    send_flag = False
 
+                                break     
+                            else:
+                                pass
+                                
+
+        if sub_mode == 3:                        
+            for first_door_idx in range(270, 360):
+                if first_door_idx == 359:
+                    break
+                if lidar_ranges[first_door_idx + 1] > lidar_ranges[first_door_idx] + 1:
+                    for second_door in range(0, 90):
+                        if second_door ==  89:
+                            break
+                        if lidar_ranges[second_door + 1] < lidar_ranges[second_door] - 0.8:
+                            second_door_idx = second_door + 1
+                                
+                            # 문틀 폭 계산 함수
+                            door_width = Calc_Door_Width(first_door_idx, second_door_idx, 2)
+                            if door_width > 0.7 and door_width < 1.2:
+                                is_door_cnt = is_door_cnt + 1
+
+                                
+                                cor_first_door_idx, cor_second_door_idx = Open_Door_Filtering(first_door_idx, second_door_idx)
+                                door_width = Calc_Door_Width(cor_first_door_idx, cor_second_door_idx, 2)
+                                door_center_x, door_center_y  = Calc_Door_Pos(cor_first_door_idx, cor_second_door_idx, 1, door_width)    
+
+
+                                print('%.8f %.8f %.8f %.8f %.8f'%(cor_first_door_idx, cor_second_door_idx, door_center_x, door_center_y, door_width))
+                                                        
+                                sum_x +=door_center_x
+                                sum_y += door_center_y
+                                sum_door += door_width
+                                if is_door_cnt == 10:
+                                    publish_cnt = publish_cnt + 1
+                                    avg_door_width = sum_door / 10
+                                    avg_pos_x = sum_x / 10
+                                    avg_pos_y = sum_y / 10
+                                    is_door_cnt = 0
+                                    sum_door = 0
+                                    sum_x = 0
+                                    sum_y = 0
+                                    
+                                    pos.x_pos = avg_pos_x
+                                    pos.y_pos = avg_pos_y
+                                    pos.door_width = avg_door_width
+                                    pos.send_data_flag = send_flag
+                                    pos.door_loc = 1
+                                    if publish_cnt == 5:
+                                        door_pub.publish(pos)
+                                        send_flag = False
+                                        publish_cnt = 0
+                                    print("publish");
+                                    
+                                    
                                 break
                             else:
-                                print("문3X")                                
-                                check_0_90_flag = False
+                                pass                                
+                               
                                  
     
-
-
-    elif mode == 1:
+    elif mode == 2:
         # 라이다 0도 부터 시작
         for first_door_idx in range(0, 135):
             if first_door_idx == 134:
@@ -398,7 +412,7 @@ def Is_door_check(scann):
                     
                             cor_first_door_idx, cor_second_door_idx = Open_Door_Filtering(first_door_idx, second_door_idx)
                             door_width = Calc_Door_Width(cor_first_door_idx, cor_second_door_idx, 1)
-                            door_center_x, door_center_y  = Calc_Door_Pos(cor_first_door_idx, cor_second_door_idx, 1, door_width)    
+                            door_center_x, door_center_y  = Calc_Door_Pos(cor_first_door_idx, cor_second_door_idx, 2, door_width)    
                             
                             sum_x +=door_center_x
                             sum_y += door_center_y
@@ -416,7 +430,9 @@ def Is_door_check(scann):
                                 pos.y_pos = avg_pos_y
                                 pos.door_width = avg_door_width
                                 pos.send_data_flag = send_flag
+                                pos.door_loc = 2
                                 door_pub.publish(pos)
+                                
                                 send_flag = False
                             break     
                         else:
@@ -463,7 +479,7 @@ def Is_door_check(scann):
             #             print("문요X")            
 
 
-    elif mode == 2:
+    elif mode == 3:
         # 라이다 225도 부터 시작
         for first_door_idx in range(225, 360):
             if first_door_idx == 359:
@@ -486,7 +502,7 @@ def Is_door_check(scann):
 
                             cor_first_door_idx, cor_second_door_idx = Open_Door_Filtering(first_door_idx, second_door_idx)
                             door_width = Calc_Door_Width(cor_first_door_idx, cor_second_door_idx, 1)
-                            door_center_x, door_center_y  = Calc_Door_Pos(cor_first_door_idx, cor_second_door_idx, 2, door_width)    
+                            door_center_x, door_center_y  = Calc_Door_Pos(cor_first_door_idx, cor_second_door_idx, 3, door_width)    
                             
                             sum_x +=door_center_x
                             sum_y += door_center_y
@@ -504,6 +520,7 @@ def Is_door_check(scann):
                                 pos.y_pos = avg_pos_y
                                 pos.door_width = avg_door_width
                                 pos.send_data_flag = send_flag
+                                pos.door_loc = 3
                                 door_pub.publish(pos)
                                 send_flag = False
                             
@@ -585,7 +602,9 @@ def Calc_Door_Width(first_door_idx, second_door_idx, mode):
     
     # 문이 정면에 있을 경우
     if mode == 2:
-        second_ang = 6.283185259 - second_ang              # 두번째 각도는 360도(6.283185259rad)에서 두번째각도를 빼야함
+        first_ang = 6.283185259 - first_ang              # 두번째 각도는 360도(6.283185259rad)에서 두번째각도를 빼야함
+        
+        #second_ang = 6.283185259 - second_ang              # 두번째 각도는 360도(6.283185259rad)에서 두번째각도를 빼야함
         Theta_rad = second_ang + first_ang
         Theta = (Theta_rad * 180)/ math.pi
             
@@ -631,15 +650,15 @@ def Calc_Door_Pos(first_door_idx, second_door_idx, mode, door_width):
     second_x_pos = (second_len * math.cos(second_ang))
     second_y_pos = (second_len * math.sin(second_ang))
 
-    if mode == 0:
+    if mode == 1:
         center_x_pos = first_x_pos
         center_y_pos = (first_y_pos + second_y_pos) / 2
         
-    elif mode == 1:
+    elif mode == 2:
         center_x_pos = (first_x_pos + second_x_pos) / 2
         center_y_pos = second_y_pos
         
-    elif mode == 2:
+    elif mode == 3:
         center_x_pos = (second_x_pos + first_x_pos) / 2    
         center_y_pos = first_y_pos
         
@@ -653,7 +672,9 @@ def main():
     
     rospy.init_node('detect_door')
 
-    laser_sub = rospy.Subscriber('/scan_filtered', LaserScan, clbk_laser)
+    laser_sub = rospy.Subscriber('/scan', LaserScan, clbk_laser)
+    service_server = rospy.Service('/door_service_scan', door_mode, door_modeCallback)
+
     rospy.spin()
     
     #rate = rospy.Rate(50)    # 10hz 0.1s

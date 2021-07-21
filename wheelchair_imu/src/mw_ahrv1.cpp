@@ -68,6 +68,7 @@ public:
     bool doorCallback(wheelchair_msg::door::Request &req, wheelchair_msg::door::Response &res)
     {
         res.calc_door_flag = true;
+        ROS_INFO("IMU RESET COMFILCATE");
         strcpy((char *)Tx,"cmd=5\r\n");
         write(dev,Tx,strlen((char *)Tx));
         return true;

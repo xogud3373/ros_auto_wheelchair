@@ -18,7 +18,7 @@ obstacle_layer:
 inflation_layer:
   enabled:              true
   cost_scaling_factor:  3.0  # exponential rate at which the obstacle cost drops off (default: 10)
-  inflation_radius:     0.2  # 장애물의 팽창 반지름. 해당 반지름까지는 통과안함.
+  inflation_radius:     0.1  # 장애물의 팽창 반지름. 해당 반지름까지는 통과안함.
 
 # 3.0 , 0.5
  

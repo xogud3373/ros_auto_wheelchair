@@ -1,0 +1,5 @@
+bool door_req_flag
+int32 door_mode
+int32 sub_door_mode
+---
+bool door_res_flag

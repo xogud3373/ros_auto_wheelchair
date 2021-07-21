@@ -3,6 +3,7 @@
 #include <geometry_msgs/Pose2D.h>
 #include <nav_msgs/Odometry.h>
 #include <wheelchair_msg/door.h>
+#include <wheelchair_msg/door_mode.h>
 #include "wheelchair_door/doorpos.h"
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
@@ -31,7 +32,7 @@ class GoalToDoor
 {
 
 public:
-	GoalToDoor() : ac("move_base",true)
+	GoalToDoor() : ac("move_base",true) , rate(0.1)
 	{
 
 		goal_pos = nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal",1);
@@ -39,67 +40,108 @@ public:
     	door_pos = nh.subscribe("door_pos", 10, &GoalToDoor::doorposCallback, this);
 		pub_pose = nh.advertise<geometry_msgs::Pose2D>("pose2d", 1);
 
-		client = nh.serviceClient<wheelchair_msg::door>("imu_flag_service");
+		imu_client = nh.serviceClient<wheelchair_msg::door>("imu_flag_service");
+		door_client = nh.serviceClient<wheelchair_msg::door_mode>("door_service_scan");
+		
 		ac.waitForServer();
 	}
 
 	void doorposCallback(const wheelchair_door::doorpos::ConstPtr& msg)
 	{
 		float goal_x = 0.0, goal_y = 0.0, rotate_x = 0.0, rotate_y = 0.0;
+		int door_loc = 0;
+		static int callback_cnt = 1;
 
-		if(msg->send_data_flag == true)
+
+		if(msg->send_data_flag == true && callback_cnt == 2)
 		{
+			ROS_INFO("NO");
 			position.door_center_x = msg->x_pos;
 			position.door_center_y = msg->y_pos;
 			door_width = msg->door_width;
-			//Send_Goal();
+			door_loc = msg->door_loc;
+	
+			Send_Goal(door_loc, callback_cnt);
+			//callback_cnt = 1;
+		}
 
-			srv.request.imu_clear_flag = true;
-			if(client.call(srv))
+		if(msg->send_data_flag == true && callback_cnt == 1)
+		{
+			ROS_INFO("hi");
+			doing_flag = true;
+			position.door_center_x = msg->x_pos;
+			position.door_center_y = msg->y_pos;
+			door_width = msg->door_width;
+			door_loc = msg->door_loc;
+
+			imu_srv.request.imu_clear_flag = true;
+			if(imu_client.call(imu_srv))
 			{
-				Send_Goal();
+				ROS_INFO("BYE");
+				Send_Goal(door_loc, callback_cnt);
 			}
 			else
 			{
 				ROS_ERROR("Failed to call service");
 			}
-
-
-			// acgoal.target_pose.header.frame_id = "odom";
-			// acgoal.target_pose.header.stamp = ros::Time::now();
-
-			// goal_x = position.door_center_x + LIDAR_X_POS ;
-			// goal_y = position.door_center_y + LIDAR_Y_POS ;
-			
-			// acgoal.target_pose.pose.position.x = ( (goal_x * cos(pose2d.theta)) + (goal_x * sin(pose2d.theta)) ) + 0.3; 
-			// acgoal.target_pose.pose.position.y = ( -(goal_y * sin(pose2d.theta)) + (goal_y * cos(pose2d.theta)) ) + 1.0;
-			// acgoal.target_pose.pose.orientation.z = -0.707;
-			// acgoal.target_pose.pose.orientation.w = 0.707;
-			// ac.sendGoal(acgoal, boost::bind(&GoalToDoor::doneCb, this, _1), MoveBaseClient::SimpleActiveCallback());
+			callback_cnt++;
 		}
+
+		
+		
 		
 	}
-
+	#define X_OFFSET 0.2
 	#define Y_OFFSET 1.0
-	void Send_Goal()
+	void Send_Goal(int door_loc, int behavior)
 	{
 		float goal_x = 0.0, goal_y = 0.0;
+		unsigned char count = 0;
 
-		acgoal.target_pose.header.frame_id = "odom";
-		acgoal.target_pose.header.stamp = ros::Time::now();
+		if(behavior == 1)
+		{
+			acgoal.target_pose.header.frame_id = "odom";
+			acgoal.target_pose.header.stamp = ros::Time::now();
 
-		goal_x = position.door_center_x + LIDAR_X_POS + WHEELCHAIR_ROTATE_POINT;
-		goal_y = position.door_center_y + LIDAR_Y_POS ;
+			goal_x = position.door_center_x + LIDAR_X_POS + WHEELCHAIR_ROTATE_POINT;
+			goal_y = position.door_center_y + LIDAR_Y_POS ;
+			acgoal.target_pose.pose.position.x = goal_x; 
+			acgoal.target_pose.pose.position.y = goal_y + Y_OFFSET;
+		}
+		else if(behavior == 2)
+		{
+			acgoal.target_pose.header.frame_id = "odom";
+			acgoal.target_pose.header.stamp = ros::Time::now();
+			goal_x = position.my_pos_x + position.door_center_x + LIDAR_X_POS + WHEELCHAIR_ROTATE_POINT + X_OFFSET;
+			goal_y = position.my_pos_y + position.door_center_y + LIDAR_Y_POS ;
+			acgoal.target_pose.pose.position.x = goal_x; 
+			acgoal.target_pose.pose.position.y = goal_y;
+		}
+			
 
-		acgoal.target_pose.pose.position.x = goal_x; 
-		acgoal.target_pose.pose.position.y = goal_y + Y_OFFSET;
 		
-
-		//acgoal.target_pose.pose.position.x = ( (goal_x * cos(pose2d.theta)) + (goal_x * sin(pose2d.theta)) ) + 0.3; 
-		//acgoal.target_pose.pose.position.y = ( -(goal_y * sin(pose2d.theta)) + (goal_y * cos(pose2d.theta)) ) + 1.0;
-		acgoal.target_pose.pose.orientation.z = -0.707;
-		acgoal.target_pose.pose.orientation.w = 0.707;
-		ac.sendGoal(acgoal, boost::bind(&GoalToDoor::doneCb, this, _1), MoveBaseClient::SimpleActiveCallback());
+		if(door_loc == 1)
+		{
+			acgoal.target_pose.pose.orientation.z = 0;
+			acgoal.target_pose.pose.orientation.w = 1.0;
+			ac.sendGoal(acgoal, boost::bind(&GoalToDoor::doneCb, this, _1), MoveBaseClient::SimpleActiveCallback());	
+		}
+		else if(door_loc == 2)
+		{
+			acgoal.target_pose.pose.orientation.z = 0.707;
+			acgoal.target_pose.pose.orientation.w = 0.707;
+			ac.sendGoal(acgoal, boost::bind(&GoalToDoor::doneCb, this, _1), MoveBaseClient::SimpleActiveCallback());
+		}
+		else if(door_loc == 3)
+		{
+			acgoal.target_pose.pose.orientation.z = -0.707;
+			acgoal.target_pose.pose.orientation.w = 0.707;
+			ac.sendGoal(acgoal, boost::bind(&GoalToDoor::doneCb, this, _1), MoveBaseClient::SimpleActiveCallback());
+		}
+		else
+		{
+			ROS_ERROR("Failed to get door location");
+		}
 	}
 
 	void doneCb(const actionlib::SimpleClientGoalState& state)
@@ -108,8 +150,35 @@ public:
     	if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     	{
 			cout << "reach goal" << endl;
-        	// do something as goal was reached                   
+			if(doing_flag == true)
+			{	
+				imu_srv.request.imu_clear_flag = true;
+
+				door_mode_srv.request.door_req_flag = true;
+				door_mode_srv.request.door_mode = 1;
+				door_mode_srv.request.sub_door_mode = 3;
+				
+				if(imu_client.call(imu_srv))
+				{
+					//rate.sleep();
+					//ros::Duration(10).sleep();
+					if(door_client.call(door_mode_srv))
+					{
+						ROS_INFO("SECOND NAVI START");
+					}
+					else
+					{
+						ROS_ERROR("Failed to Second Navi");
+					}
+				}
+				else
+				{
+					ROS_ERROR("Failed to Second Imu reset");
+				}
+				doing_flag = false;
+			}                   
     	}
+
     	if (ac.getState() == actionlib::SimpleClientGoalState::ABORTED)
     	{
 			cout << "not yet reach goal" << endl;
@@ -145,27 +214,29 @@ private:
 	ros::Subscriber door_pos;
 	ros::Publisher pub_pose;
 
-	ros::ServiceClient client;
-
+	ros::ServiceClient imu_client;
+	ros::ServiceClient door_client;
+	
+	ros::Rate rate;
+	
 	MoveBaseClient ac;
 	move_base_msgs::MoveBaseGoal acgoal;
-	
-
 
 	geometry_msgs::PoseStamped goal;
 	geometry_msgs::Pose2D pose2d;
-	wheelchair_msg::door srv;
+	wheelchair_msg::door imu_srv;
+	wheelchair_msg::door_mode door_mode_srv;
 
 	Position position;
 	
 	float door_width = 0.0;
+	bool doing_flag = true;
 };
 
 int main(int argc, char** argv) {
 	ros::init(argc, argv, "door_action_goals");
 	
 	GoalToDoor goaltodoor;
-	//ros::Rate loop_rate(50);
 
     // while (ros::ok())
     // {

@@ -1,20 +1,20 @@
 DWAPlannerROS:
 
 # Robot Configuration Parameters
-  max_vel_x: 0.35                             # x축 최대 속도(meter/sec)
-  min_vel_x: -0.35                            # y축 최대 속도(meter/sec)
+  max_vel_x: 0.2                             # x축 최대 속도(meter/sec) 0.35
+  min_vel_x: -0.2                            # y축 최대 속도(meter/sec) -0.35
 
   max_vel_y: 0.0                              # 전방향 로봇의 경우에만 해당하므로 생략
   min_vel_y: 0.0                              # 전방향 로봇의 경우에만 해당하므로 생략  
 
 # The velocity when robot is moving in a straight line
-  max_vel_trans:  0.35                        # 최대 병진속도(meter/sec)
-  min_vel_trans:  0.15                        # 최소 병진속도(meter/sec), 음수면 후진도 가능
+  max_vel_trans:  0.20                        # 최대 병진속도(meter/sec)  0.35
+  min_vel_trans:  0.1                        # 최소 병진속도(meter/sec), 음수면 후진도 가능 0.15
 
   max_vel_theta: 2.0                         # 최대 회전속도(radian/sec) 1.75
   min_vel_theta: 1.0                         # 최소 회전속도(radian/sec) 0.37
 
-  acc_lim_x: 2.5                              # x축 가속도 제한(meter/sec^2)
+  acc_lim_x: 2.5                              # x축 가속도 제한(meter/sec^2)  2.5
   acc_lim_y: 0.0                              # y축 가속도 제한(meter/sec^2)
   acc_lim_theta: 1.8                          # theta축 각가속도 제한(radian/sec^2)
 
