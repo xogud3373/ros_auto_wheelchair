@@ -281,6 +281,7 @@ def Is_door_check(scann):
                                     pos.door_width = avg_door_width
                                     pos.send_data_flag = send_flag
                                     pos.door_loc = 1
+                                    pos.door_sub_loc = 1
                                     door_pub.publish(pos)
                                     send_flag = False
                                 
@@ -328,6 +329,7 @@ def Is_door_check(scann):
                                     pos.door_width = avg_door_width
                                     pos.send_data_flag = send_flag
                                     pos.door_loc = 1
+                                    pos.door_sub_loc = 2
                                     door_pub.publish(pos)
                                     
                                     send_flag = False
@@ -357,10 +359,8 @@ def Is_door_check(scann):
                                 cor_first_door_idx, cor_second_door_idx = Open_Door_Filtering(first_door_idx, second_door_idx)
                                 door_width = Calc_Door_Width(cor_first_door_idx, cor_second_door_idx, 2)
                                 door_center_x, door_center_y  = Calc_Door_Pos(cor_first_door_idx, cor_second_door_idx, 1, door_width)    
-
-
-                                print('%.8f %.8f %.8f %.8f %.8f'%(cor_first_door_idx, cor_second_door_idx, door_center_x, door_center_y, door_width))
-                                                        
+                                
+                                                         
                                 sum_x +=door_center_x
                                 sum_y += door_center_y
                                 sum_door += door_width
@@ -379,12 +379,11 @@ def Is_door_check(scann):
                                     pos.door_width = avg_door_width
                                     pos.send_data_flag = send_flag
                                     pos.door_loc = 1
+                                    pos.door_sub_loc = 3
                                     if publish_cnt == 5:
                                         door_pub.publish(pos)
                                         send_flag = False
-                                        publish_cnt = 0
-                                    print("publish");
-                                    
+                                        publish_cnt = 0    
                                     
                                 break
                             else:
@@ -431,6 +430,7 @@ def Is_door_check(scann):
                                 pos.door_width = avg_door_width
                                 pos.send_data_flag = send_flag
                                 pos.door_loc = 2
+                                pos.door_sub_loc = 0
                                 door_pub.publish(pos)
                                 
                                 send_flag = False
@@ -521,6 +521,7 @@ def Is_door_check(scann):
                                 pos.door_width = avg_door_width
                                 pos.send_data_flag = send_flag
                                 pos.door_loc = 3
+                                pos.door_sub_loc = 0
                                 door_pub.publish(pos)
                                 send_flag = False
                             

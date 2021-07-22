@@ -308,7 +308,7 @@
     name="scan_joint"
     type="fixed">
     <origin
-      xyz="0.4188 -0.25 0.1126"
+      xyz="0.4188 -0.25 0.295"
       rpy="0 0 3.14" />
     <parent
       link="base_link" />
@@ -317,7 +317,7 @@
     <axis
       xyz="0 0 0" />
   </joint>
-  
+
   <link
     name="imu_link">
     <inertial>

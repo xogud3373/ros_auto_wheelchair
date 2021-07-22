@@ -4,7 +4,7 @@
 #include <nav_msgs/Odometry.h>
 #include <wheelchair_msg/door.h>
 #include <wheelchair_msg/door_mode.h>
-#include "wheelchair_door/doorpos.h"
+#include <wheelchair_msg/doormsg.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 #include <tf/tf.h>
@@ -27,12 +27,11 @@ typedef struct
 	float my_pos_y;
 }Position;
 
-
 class GoalToDoor
 {
 
 public:
-	GoalToDoor() : ac("move_base",true) , rate(0.1)
+	GoalToDoor() : ac("move_base",true) , rate(10)
 	{
 
 		goal_pos = nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal",1);
@@ -46,10 +45,11 @@ public:
 		ac.waitForServer();
 	}
 
-	void doorposCallback(const wheelchair_door::doorpos::ConstPtr& msg)
+	void doorposCallback(const wheelchair_msg::doormsg::ConstPtr& msg)
 	{
 		float goal_x = 0.0, goal_y = 0.0, rotate_x = 0.0, rotate_y = 0.0;
-		int door_loc = 0;
+		int door_loc = 0, door_sub_loc = 0;
+
 		static int callback_cnt = 1;
 
 
@@ -60,8 +60,9 @@ public:
 			position.door_center_y = msg->y_pos;
 			door_width = msg->door_width;
 			door_loc = msg->door_loc;
+			door_sub_loc = msg->door_sub_loc;
 	
-			Send_Goal(door_loc, callback_cnt);
+			Send_Goal(door_loc, door_sub_loc, callback_cnt);
 			//callback_cnt = 1;
 		}
 
@@ -73,12 +74,13 @@ public:
 			position.door_center_y = msg->y_pos;
 			door_width = msg->door_width;
 			door_loc = msg->door_loc;
-
+			door_sub_loc = msg->door_sub_loc;
+			
 			imu_srv.request.imu_clear_flag = true;
 			if(imu_client.call(imu_srv))
 			{
 				ROS_INFO("BYE");
-				Send_Goal(door_loc, callback_cnt);
+				Send_Goal(door_loc, door_sub_loc, callback_cnt);
 			}
 			else
 			{
@@ -91,29 +93,67 @@ public:
 		
 		
 	}
-	#define X_OFFSET 0.2
+	#define X_OFFSET 0.4
 	#define Y_OFFSET 1.0
-	void Send_Goal(int door_loc, int behavior)
+	void Send_Goal(int door_loc, int door_sub_loc , int behavior)
 	{
 		float goal_x = 0.0, goal_y = 0.0;
 		unsigned char count = 0;
 
-		if(behavior == 1)
-		{
-			acgoal.target_pose.header.frame_id = "odom";
-			acgoal.target_pose.header.stamp = ros::Time::now();
+		acgoal.target_pose.header.frame_id = "odom";
+		acgoal.target_pose.header.stamp = ros::Time::now();
 
-			goal_x = position.door_center_x + LIDAR_X_POS + WHEELCHAIR_ROTATE_POINT;
-			goal_y = position.door_center_y + LIDAR_Y_POS ;
-			acgoal.target_pose.pose.position.x = goal_x; 
-			acgoal.target_pose.pose.position.y = goal_y + Y_OFFSET;
+		if(behavior == 1)
+		{	
+			if(door_loc == 1)
+			{	
+				if(door_sub_loc == 1)
+				{
+					goal_x = position.door_center_x + LIDAR_X_POS ;
+					goal_y = position.door_center_y + LIDAR_Y_POS ;
+					acgoal.target_pose.pose.position.x = goal_x - Y_OFFSET; 
+					acgoal.target_pose.pose.position.y = goal_y;
+				}
+				else if(door_sub_loc == 2)
+				{
+					goal_x = position.door_center_x + LIDAR_X_POS ;
+					goal_y = position.door_center_y + LIDAR_Y_POS ;
+					acgoal.target_pose.pose.position.x = goal_x - Y_OFFSET; 
+					acgoal.target_pose.pose.position.y = goal_y;
+				}
+
+				else if(door_sub_loc == 3)
+				{
+					goal_x = position.door_center_x + LIDAR_X_POS ;
+					goal_y = position.door_center_y + LIDAR_Y_POS ;
+					acgoal.target_pose.pose.position.x = goal_x - Y_OFFSET; 
+					acgoal.target_pose.pose.position.y = goal_y;
+				}
+			}
+
+			else if(door_loc == 2)
+			{
+				goal_x = position.door_center_x + LIDAR_X_POS + WHEELCHAIR_ROTATE_POINT;
+				goal_y = position.door_center_y + LIDAR_Y_POS ;
+				acgoal.target_pose.pose.position.x = goal_x; 
+				acgoal.target_pose.pose.position.y = goal_y - Y_OFFSET;
+			}
+
+			else if(door_loc == 3)
+			{
+				goal_x = position.door_center_x + LIDAR_X_POS + WHEELCHAIR_ROTATE_POINT;
+				goal_y = position.door_center_y + LIDAR_Y_POS ;
+				acgoal.target_pose.pose.position.x = goal_x; 
+				acgoal.target_pose.pose.position.y = goal_y + Y_OFFSET;
+			}
 		}
+
 		else if(behavior == 2)
 		{
 			acgoal.target_pose.header.frame_id = "odom";
 			acgoal.target_pose.header.stamp = ros::Time::now();
 			goal_x = position.my_pos_x + position.door_center_x + LIDAR_X_POS + WHEELCHAIR_ROTATE_POINT + X_OFFSET;
-			goal_y = position.my_pos_y + position.door_center_y + LIDAR_Y_POS ;
+			goal_y = position.my_pos_y + position.door_center_y + LIDAR_Y_POS + 0.25;
 			acgoal.target_pose.pose.position.x = goal_x; 
 			acgoal.target_pose.pose.position.y = goal_y;
 		}
@@ -160,8 +200,6 @@ public:
 				
 				if(imu_client.call(imu_srv))
 				{
-					//rate.sleep();
-					//ros::Duration(10).sleep();
 					if(door_client.call(door_mode_srv))
 					{
 						ROS_INFO("SECOND NAVI START");
