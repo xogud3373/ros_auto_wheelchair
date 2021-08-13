@@ -1,17 +1,17 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
-import rospy
-from Tkinter.font import *
+# import rospy
+from tkinter.font import *
 from datetime import datetime
-import Tkinter.messagebox
+import tkinter.messagebox
 import time
-import Tkinter as tk
-from Tkinter import ttk
-from Tkinter import *
+import tkinter as tk
+from tkinter import ttk
+from tkinter import *
 
-from wheelchair_msg.msg import doormsg
-from wheelchair_msg.srv import door_mode, door_modeRequest
+# from wheelchair_msg.msg import doormsg
+# from wheelchair_msg.srv import door_mode, door_modeRequest
 
 
 tk.Tk.flag =0
@@ -466,7 +466,14 @@ class click_F():
     def __init__(self):
         tk.Tk.flag =8
         print(tk.Tk.flag)
-        msg = tkinter.messagebox.showinfo("정보 메시지", "앞쪽 선택")
+        # door_request_srv.door_req_flag =  True
+        # door_request_srv.door_mode = 1
+        # door_request_srv.sub_door_mode = 3
+        # result = door_client(door_request_srv)
+        # if result == True:
+        #     msg = tkinter.messagebox.showinfo("정보 메시지", "앞쪽 선택")
+        # else:
+        #     msg = tkinter.messagebox.showinfo("정보 메시지", "문 통과불가")
 class click_M():
     def __init__(self):
         tk.Tk.flag =9
@@ -480,9 +487,9 @@ class click_R():
 
 app=wheelchairapp()
 
-rospy.wait_for_service('/door_service_scan')
-door_client = rospy.ServiceProxy('/door_service_scan',door_mode)
-door_request_srv = door_modeRequest()
+# rospy.wait_for_service('/door_service_scan')
+# door_client = rospy.ServiceProxy('/door_service_scan',door_mode)
+# door_request_srv = door_modeRequest()
 
-rospy.init_node('wheelchar_lcd', anonymous=True)
+# rospy.init_node('wheelchar_lcd', anonymous=True)
 app.mainloop()

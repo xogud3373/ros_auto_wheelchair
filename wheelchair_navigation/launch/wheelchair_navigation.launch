@@ -1,11 +1,15 @@
 <launch>
   <!-- Arguments -->
+  <!--
   <arg name="map_file" default="$(find wheelchair_slam)/map/bukeon.yaml"/>
+  -->
+  <arg name="map_file" default="$(find wheelchair_slam)/map/sangi.yaml"/>
   <arg name="open_rviz" default="true"/>
   <arg name="move_forward_only" default="false"/>
   <arg name="scan_topic" default="scan_filtered"/>
   <!--
   <arg name="scan_topic" default="filteredscan"/>
+  
   -->
   
   <!-- Wheelchair bringup -->
@@ -17,6 +21,9 @@
 
   <!-- AMCL -->
   <include file="$(find wheelchair_navigation)/launch/wheelchair_amcl.launch"/>
+
+  <!-- IMU -->
+  <include file="$(find wheelchair_imu)/launch/wheelchair_imu.launch"/>
 
   <!-- Move_base -->
   <include file="$(find wheelchair_navigation)/launch/wheelchair_move_base.launch">

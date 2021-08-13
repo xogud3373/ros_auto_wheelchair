@@ -49,6 +49,9 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   doormsg.msg
+  caselidar.msg
+  coop.msg
+  normal.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -56,6 +59,8 @@ add_service_files(
   FILES
   door.srv
   door_mode.srv
+  coop_mode.srv
+  normal_mode.srv
 )
 
 ## Generate actions in the 'action' folder

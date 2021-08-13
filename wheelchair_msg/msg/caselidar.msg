@@ -1,0 +1,5 @@
+string object_pos
+float32 front_range
+float32 right_range
+float32 left_range
+int32 lidar_deg

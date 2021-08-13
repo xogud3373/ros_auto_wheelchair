@@ -1,0 +1,1 @@
+bool coop_mode_start_msg

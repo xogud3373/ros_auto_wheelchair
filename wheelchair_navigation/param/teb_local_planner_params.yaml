@@ -34,7 +34,7 @@ TebLocalPlannerROS:
  # GoalTolerance
     
  xy_goal_tolerance: 0.2                               # 목표 위치에서 로봇 위치의 최대 허용 편차
- yaw_goal_tolerance: 0.1                              # 목표 방향에서 로봇 방향의 최대 허용 각도 편차
+ yaw_goal_tolerance: 0.5                              # 목표 방향에서 로봇 방향의 최대 허용 각도 편차
  free_goal_vel: False                                 # false로 설정하면 목표 속도 제약이 제거되어 로봇이 최대 속도로 목표에 도달할 수 있다.
     
  # Obstacles
@@ -64,7 +64,7 @@ TebLocalPlannerROS:
  weight_acc_lim_x: 1                              # 최대 허용 번역 가속도를 충족하기 위한 최적화 가중치
  weight_acc_lim_theta: 1                          # 최대 허용 각가속도를 충족하기 위한 최적화 가중치
  weight_kinematics_nh: 1000                       # 비 홀로노믹 운동학을 충족하기 위한 최적화 가중치
- weight_kinematics_forward_drive: 800               # 로봇이 전진방향만 선택하도록 강제하는 최적화 가중치( 1 이면 후진가능, 1000이면 전진만 )
+ weight_kinematics_forward_drive: 1000               # 로봇이 전진방향만 선택하도록 강제하는 최적화 가중치( 1 이면 후진가능, 1000이면 전진만 )
  weight_kinematics_turning_radius: 1              # 최소 횢전 반경을 적용하기 위한 최적화 중량( 자동차 같은 로봇에만 해당 )
  weight_optimaltime: 1
  weight_obstacle: 50                              # 장애물로부터 최소 거리를 유지하기 위한 최적화 무게

@@ -38,7 +38,7 @@ pos = doormsg()
 def door_modeCallback(request):
     global mode, door_scan_flag, send_flag, sub_mode
     if request.door_req_flag == True:
-        
+        print("succ!!")
         mode = request.door_mode
         sub_mode = request.sub_door_mode
         door_scan_flag = True
@@ -240,7 +240,9 @@ def Is_door_check(scann):
     scann.ranges = lidar_ranges
     lidar_pub.publish(scann)
 
-
+    # print("--------------")
+    # print(lidar_ranges)
+    # print("--------------")
     if mode == 1:
         if sub_mode == 1:
             for first_door_idx in range(0, 90):
@@ -352,7 +354,7 @@ def Is_door_check(scann):
                                 
                             # 문틀 폭 계산 함수
                             door_width = Calc_Door_Width(first_door_idx, second_door_idx, 2)
-                            if door_width > 0.7 and door_width < 1.2:
+                            if door_width > 0.7 and door_width < 4.5:
                                 is_door_cnt = is_door_cnt + 1
 
                                 
@@ -532,34 +534,34 @@ def Is_door_check(scann):
                             
                     
 def Open_Door_Filtering(f_idx, s_idx):
-    f_position = [[0 for j in range(2)] for i in range(10)]
-    s_position = [[0 for j in range(2)] for i in range(10)]
+    f_position = [[0 for j in range(2)] for i in range(60)]
+    s_position = [[0 for j in range(2)] for i in range(60)]
     
     f_min_dist = []
     s_min_dist = []
     # 첫번째 문 틀부터 10도까지 감소된 지점의 좌표화
-    for i in range(0, 10):
+    for i in range(0, 60):
         if f_idx - i <= 0:
             break
         f_position[i][0] = -(lidar_ranges[f_idx - i] * math.sin(lidar_angle[f_idx - i]))
         f_position[i][1] = (lidar_ranges[f_idx - i] * math.cos(lidar_angle[f_idx - i]))
 
     # 두번째 문 틀부터 10도까지 증가된 지점의 좌표화
-    for j in range(0, 10):
+    for j in range(0, 60):
         if s_idx + j >= 360:
             break
         s_position[j][0] = -(lidar_ranges[s_idx + j] * math.sin(lidar_angle[s_idx + j]))
         s_position[j][1] = (lidar_ranges[s_idx + j] * math.cos(lidar_angle[s_idx + j]))
 
     # 첫번째 문 틀과 증가되는 두번째 문 틀의 직선거리 계산
-    for k in range(0, 10):
+    for k in range(0, 60):
         if s_position[k][0] == 0:
             break
         dist = math.sqrt( ( math.pow((f_position[0][0] - s_position[k][0]), 2) ) +  ( math.pow((f_position[0][1] - s_position[k][1]), 2)) ) 
         f_min_dist.append(dist)
 
     # 두번째 문 틀과 감소되는 첫번째 문 틀의 직선거리 계산
-    for k in range(0, 10):
+    for k in range(0, 60):
         if f_position[k][0] == 0:
             break
         dist = math.sqrt( ( math.pow((s_position[0][0] - f_position[k][0]), 2 ) ) +  ( math.pow((s_position[0][1] - f_position[k][1]), 2 )) ) 

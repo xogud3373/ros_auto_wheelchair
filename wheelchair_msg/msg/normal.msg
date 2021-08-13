@@ -1,0 +1,1 @@
+bool normal_mode_start_msg

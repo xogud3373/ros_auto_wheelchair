@@ -93,7 +93,7 @@ public:
 		
 		
 	}
-	#define X_OFFSET 0.4
+	#define X_OFFSET 0.5
 	#define Y_OFFSET 1.0
 	void Send_Goal(int door_loc, int door_sub_loc , int behavior)
 	{
@@ -153,7 +153,7 @@ public:
 			acgoal.target_pose.header.frame_id = "odom";
 			acgoal.target_pose.header.stamp = ros::Time::now();
 			goal_x = position.my_pos_x + position.door_center_x + LIDAR_X_POS + WHEELCHAIR_ROTATE_POINT + X_OFFSET;
-			goal_y = position.my_pos_y + position.door_center_y + LIDAR_Y_POS + 0.25;
+			goal_y = position.my_pos_y + position.door_center_y + LIDAR_Y_POS - 0.1;
 			acgoal.target_pose.pose.position.x = goal_x; 
 			acgoal.target_pose.pose.position.y = goal_y;
 		}
