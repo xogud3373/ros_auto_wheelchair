@@ -1,0 +1,3 @@
+<launch>
+ <node pkg="wheelchair_lcd" type="lcd_test2.py" name="lcd" output="screen"/>
+</launch>

@@ -10,10 +10,13 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 
+from wheelchair_msg.msg import normal
+from wheelchair_msg.msg import coop
+from geometry_msgs.msg import PoseStamped
 from wheelchair_msg.msg import doormsg
 from wheelchair_msg.srv import door_mode, door_modeRequest
-from wheelchair_msg.srv import normal_mode, normal_modeRequest
-from wheelchair_msg.srv import coop_mode, coop_modeRequest
+#from wheelchair_msg.srv import normal_mode, normal_modeRequest
+#from wheelchair_msg.srv import coop_mode, coop_modeRequest
 
 
 tk.Tk.flag =0
@@ -43,7 +46,7 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self,parent)
         
-        img = PhotoImage(file='ModeSelect77.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/ModeSelect77.png') 
         lbl = Label(self, image=img) 
         lbl.image = img 
         lbl.pack(padx=0, pady=0)
@@ -61,7 +64,7 @@ class Page1(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         
-        img = PhotoImage(file='ModeSelect77.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/ModeSelect77.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
@@ -79,64 +82,73 @@ class Page2(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        img = PhotoImage(file='Page277.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/Page277.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page1))
         button1.image = btn_back
         button1.place(x= 300, y= 350)
 
-        btn_play = PhotoImage(file='play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/play.png') 
         button2 = tk.Button(self, image=btn_play, command=nomal_mode)
         button2.image = btn_play
         button2.place(x= 160, y= 350)
 
 class nomal_mode():
     def __init__(self):
-        normal_request_srv.normal_mode_start_req =  True
-        result = normal_client(normal_request_srv)
-        if result.normal_mode_start_res == True:
-            msg = tkinter.messagebox.showinfo("정보 메시지", "일반모드 주행")
-        else:
-            msg = tkinter.messagebox.showinfo("정보 메시지", "모드변경불가")###### tk.Tk.flag 부터 msg 라인 까지 삭제 후 오른쪽 문통과 코드 기입 ######
+        normal.normal_mode_start_msg = True
+        normal_pub.publish(normal)
+        msg = tkinter.messagebox.showinfo("정보 메시지", "일반모드 주행")
+        #normal_request_srv.normal_mode_start_req =  True
+        #normal_client(normal_request_srv)
+        # result = normal_client(normal_request_srv)
+        # if result.normal_mode_start_res == True:
+        #     msg = tkinter.messagebox.showinfo("정보 메시지", "일반모드 주행")
+        # else:
+        #     msg = tkinter.messagebox.showinfo("정보 메시지", "모드변경불가")###### tk.Tk.flag 부터 msg 라인 까지 삭제 후 오른쪽 문통과 코드 기입 ######
 
         ###### tk.Tk.flag 부터 msg 라인 까지 삭제 후 일반모드 코드 기입 ######
 
 class Page3(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='Page377.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/Page377.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page1))
         button1.image = btn_back
         button1.place(x= 300, y= 350)
 
-        btn_play = PhotoImage(file='play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/play.png') 
         button2 = tk.Button(self, image=btn_play, command=coordination_mode)
         button2.image = btn_play
         button2.place(x= 160, y= 350)
 
 class coordination_mode():
     def __init__(self):
-        coop_request_srv.coop_mode_start_req =  True
-        result = coop_client(coop_request_srv)
-        if result.coop_mode_start_res == True:
-            msg = tkinter.messagebox.showinfo("정보 메시지", "협응모드 주행")
-        else:
-            msg = tkinter.messagebox.showinfo("정보 메시지", "모드변경불가")###### tk.Tk.flag 부터 msg 라인 까지 삭제 후 오른쪽 문통과 코드 기입 ######
+        coop.coop_mode_start_msg = True
+        coop_pub.publish(coop)
+        msg = tkinter.messagebox.showinfo("정보 메시지", "협응모드 주행")
+        # coop_request_srv.coop_mode_start_req =  True
+        # result = coop_client(coop_request_srv)
+        # if result.coop_mode_start_res == True:
+        #     msg = tkinter.messagebox.showinfo("정보 메시지", "협응모드 주행")
+        # else:
+        #     msg = tkinter.messagebox.showinfo("정보 메시지", "모드변경불가")###### tk.Tk.flag 부터 msg 라인 까지 삭제 후 오른쪽 문통과 코드 기입 ######
+
         ###### tk.Tk.flag 부터 msg 라인 까지 삭제 후 협응모드 코드 기입 ######
+
         
 class Page4(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='Page477.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/Page477.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
@@ -167,42 +179,49 @@ class Page4(tk.Frame):
 class Page701(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='70177.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/70177.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 300, y= 350)
 
-        btn_play = PhotoImage(file='play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_701_mode)
         button2.image = btn_play
         button2.place(x= 160, y= 350)
         
 class go_701_mode():
     def __init__(self):
-        tk.Tk.flag =701
-        print(tk.Tk.flag)
+        goal.header.frame_id = "map"
+        goal.header.stamp = rospy.Time.now()
+        goal.pose.position.x = -68.9
+        goal.pose.position.y = -29.1
+        goal.pose.orientation.x = 0
+        goal.pose.orientation.y = 0
+        goal.pose.orientation.z = -0.707
+        goal.pose.orientation.w = 0.707
+        goal_class_pub.publish(goal)
         msg = tkinter.messagebox.showinfo("정보 메시지", "701호\n주행 시작")
         ###### tk.Tk.flag 부터 msg 라인 까지 삭제 후 701호 자율주행 코드 기입 ######
 
 class Page702(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='70277.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/70277.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 300, y= 350)
 
-        btn_play = PhotoImage(file='play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_702_mode)
         button2.image = btn_play
         button2.place(x= 160, y= 350)
@@ -217,17 +236,17 @@ class go_702_mode():
 class Page703(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='70377.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/70377.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 300, y= 350)
 
-        btn_play = PhotoImage(file='play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_703_mode)
         button2.image = btn_play
         button2.place(x= 160, y= 350)
@@ -242,17 +261,17 @@ class go_703_mode():
 class Page704(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='70477.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/70477.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 300, y= 350)
 
-        btn_play = PhotoImage(file='play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_704_mode)
         button2.image = btn_play
         button2.place(x= 160, y= 350)
@@ -267,125 +286,161 @@ class go_704_mode():
 class Page705(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='70577.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/70577.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 300, y= 350)
 
-        btn_play = PhotoImage(file='play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_705_mode)
         button2.image = btn_play
         button2.place(x= 160, y= 350)
 
 class go_705_mode():
     def __init__(self):
-        tk.Tk.flag =705
-        print(tk.Tk.flag)
+        goal.header.frame_id = "map"
+        goal.header.stamp = rospy.Time.now()
+        goal.pose.position.x = -65.4
+        goal.pose.position.y = -56.6
+        goal.pose.orientation.x = 0
+        goal.pose.orientation.y = 0
+        goal.pose.orientation.z = -0.707
+        goal.pose.orientation.w = 0.707
+        goal_class_pub.publish(goal)
         msg = tkinter.messagebox.showinfo("정보 메시지", "705호\n주행 시작")
         ###### tk.Tk.flag 부터 msg 라인 까지 삭제 후 705호 자율주행 코드 기입 ######
 
 class Page706(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='70677.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/70677.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 300, y= 350)
 
-        btn_play = PhotoImage(file='play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_706_mode)
         button2.image = btn_play
         button2.place(x= 160, y= 350)
 
 class go_706_mode():
     def __init__(self):
-        tk.Tk.flag =706
-        print(tk.Tk.flag)
+        goal.header.frame_id = "map"
+        goal.header.stamp = rospy.Time.now()
+        goal.pose.position.x = -67.7
+        goal.pose.position.y = -39.7
+        goal.pose.orientation.x = 0
+        goal.pose.orientation.y = 0
+        goal.pose.orientation.z = -0.707
+        goal.pose.orientation.w = 0.707
+        goal_class_pub.publish(goal)
         msg = tkinter.messagebox.showinfo("정보 메시지", "706호\n주행 시작")
         ###### tk.Tk.flag 부터 msg 라인 까지 삭제 후 706호 자율주행 코드 기입 ######
 
 class Page707(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='70777.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/70777.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 300, y= 350)
 
-        btn_play = PhotoImage(file='play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_707_mode)
         button2.image = btn_play
         button2.place(x= 160, y= 350)
 
 class go_707_mode():
     def __init__(self):
-        tk.Tk.flag =707
-        print(tk.Tk.flag)
+        goal.header.frame_id = "map"
+        goal.header.stamp = rospy.Time.now()
+        goal.pose.position.x = -67.7
+        goal.pose.position.y = -39.7
+        goal.pose.orientation.x = 0
+        goal.pose.orientation.y = 0
+        goal.pose.orientation.z = -0.707
+        goal.pose.orientation.w = 0.707
+        goal_class_pub.publish(goal)
         msg = tkinter.messagebox.showinfo("정보 메시지", "707호\n주행 시작")
         ###### tk.Tk.flag 부터 msg 라인 까지 삭제 후 707호 자율주행 코드 기입 ###### 
 
 class Page708(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='70877.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/70877.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 300, y= 350)
 
-        btn_play = PhotoImage(file='play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_708_mode)
         button2.image = btn_play
         button2.place(x= 160, y= 350)
 
 class go_708_mode():
     def __init__(self):
-        tk.Tk.flag =708
-        print(tk.Tk.flag)
+        goal.header.frame_id = "map"
+        goal.header.stamp = rospy.Time.now()
+        goal.pose.position.x = -68.8
+        goal.pose.position.y = -30.91
+        goal.pose.orientation.x = 0
+        goal.pose.orientation.y = 0
+        goal.pose.orientation.z = -0.707
+        goal.pose.orientation.w = 0.707
+        goal_class_pub.publish(goal)
+
         msg = tkinter.messagebox.showinfo("정보 메시지", "708호\n주행 시작")
         ###### tk.Tk.flag 부터 msg 라인 까지 삭제 후 708호 자율주행 코드 기입 ######
 
 class Page709(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='70977.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/70977.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 300, y= 350)
 
-        btn_play = PhotoImage(file='play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_709_mode)
         button2.image = btn_play
         button2.place(x= 160, y= 350)
 
 class go_709_mode():
     def __init__(self):
-        tk.Tk.flag =709
-        print(tk.Tk.flag)
+        goal.header.frame_id = "map"
+        goal.header.stamp = rospy.Time.now()
+        goal.pose.position.x = -70.0
+        goal.pose.position.y = -22.5
+        goal.pose.orientation.x = 0
+        goal.pose.orientation.y = 0
+        goal.pose.orientation.z = -0.707
+        goal.pose.orientation.w = 0.707
+        goal_class_pub.publish(goal)
         msg = tkinter.messagebox.showinfo("정보 메시지", "709호\n주행 시작")
         ###### tk.Tk.flag 부터 msg 라인 까지 삭제 후 709호 자율주행 코드 기입 ######
 
@@ -393,7 +448,7 @@ class Page5(tk.Frame):
     def __init__(self, parent, controller):
         tk.Tk.flag =0
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='Page577.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image1/Page577.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
@@ -488,17 +543,28 @@ class click_R():
 
 app=wheelchairapp()
 
-rospy.wait_for_service('/door_service_scan')
+
+
+#rospy.wait_for_service('/door_service_scan')
 door_client = rospy.ServiceProxy('/door_service_scan',door_mode)
 door_request_srv = door_modeRequest()
 
-rospy.wait_for_service('/normal_mode_service')
-normal_client = rospy.ServiceProxy('/normal_mode_service',normal_mode)
-normal_request_srv = normal_modeRequest()
+#rospy.wait_for_service('/normal_mode_service')
+# normal_client = rospy.ServiceProxy('/normal_mode_service',normal_mode)
+# normal_request_srv = normal_modeRequest()
 
-rospy.wait_for_service('/coop_mode_service')
-coop_client = rospy.ServiceProxy('/coop_mode_service',coop_mode)
-coop_request_srv = coop_modeRequest()
+#rospy.wait_for_service('/coop_mode_service')
+# coop_client = rospy.ServiceProxy('/coop_mode_service',coop_mode)
+# coop_request_srv = coop_modeRequest()
+
+normal_pub = rospy.Publisher('/drive_normal', normal, queue_size= 1)
+normal = normal()
+
+coop_pub = rospy.Publisher('/drive_coop', coop, queue_size=1)
+coop = coop()
+
+goal_class_pub = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=1)
+goal = PoseStamped()
 
 rospy.init_node('wheelchar_lcd', anonymous=True)
 

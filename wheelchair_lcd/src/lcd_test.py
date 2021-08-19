@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-# import rospy
+import rospy
 from tkinter.font import *
 from datetime import datetime
 import tkinter.messagebox
@@ -10,8 +10,8 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 
-# from wheelchair_msg.msg import doormsg
-# from wheelchair_msg.srv import door_mode, door_modeRequest
+from wheelchair_msg.msg import doormsg
+from wheelchair_msg.srv import door_mode, door_modeRequest
 
 
 tk.Tk.flag =0
@@ -24,7 +24,6 @@ class wheelchairapp(tk.Tk):
         container.pack(side = "top", fill="both", expand= True)
         container.grid_rowconfigure(1000, weight=1000)
         container.grid_columnconfigure(1000, weight=1000)
-        
         self.frames = {}
         for F in (StartPage, Page1, Page2, Page3, Page4, Page5,   Page701, Page702, Page703, Page704, Page705, Page706, Page707, Page708, Page709) :
             frame = F(container, self)
@@ -40,12 +39,11 @@ class wheelchairapp(tk.Tk):
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self,parent)
-        
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/ModeSelect7.png') #이미지 읽고
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/ModeSelect7.png') #이미지 읽고
         lbl = Label(self, image=img) #이미지 넣어
         lbl.image = img  # 레퍼런스 추가
         lbl.pack(padx=0, pady=0)    #위치
-        
+
         button1 = tk.Button(self, text="일반/협응",font= ('Helvetica',11, 'bold'), bg = '#f6e5e2',width=30,command=lambda: controller.show_frame(Page1))
         button1.place(x= 360, y= 220)
 
@@ -53,13 +51,13 @@ class StartPage(tk.Frame):
         button2.place(x= 360, y= 300)
 
         button3 = tk.Button(self, text="문 통과",font= ('Helvetica',11, 'bold') , bg = '#f6e5e2',width=30, command=lambda: controller.show_frame(Page5))
-        button3.place(x= 360, y= 380)  
+        button3.place(x= 360, y= 380)
 
 class Page1(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/ModeSelect7.png') 
+
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/ModeSelect7.png')
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
@@ -83,22 +81,22 @@ class Page2(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/Page27.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/Page27.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page1))
         button1.image = btn_back
         button1.place(x= 590, y= 300)
 
-        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
         button2 = tk.Button(self, image=btn_play, command=nomal_mode)
         button2.image = btn_play
         button2.place(x= 390, y= 300)
 
-        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
+        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
         button3 = tk.Button(self, image=btn_stop,command=mode_stop)
         button3.image = btn_stop
         button3.place(x= 490, y= 300)
@@ -112,22 +110,22 @@ class nomal_mode():
 class Page3(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/Page37.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/Page37.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page1))
         button1.image = btn_back
         button1.place(x= 590, y= 300)
 
-        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
         button2 = tk.Button(self, image=btn_play, command=coordination_mode)
         button2.image = btn_play
         button2.place(x= 390, y= 300)
 
-        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
+        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
         button3 = tk.Button(self, image=btn_stop,command=mode_stop)
         button3.image = btn_stop
         button3.place(x= 490, y= 300)
@@ -141,7 +139,7 @@ class coordination_mode():
 class Page4(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/Page47.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/Page47.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
@@ -175,22 +173,22 @@ class Page4(tk.Frame):
 class Page701(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/7017.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/7017.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 590, y= 300)
 
-        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_701_mode)
         button2.image = btn_play
         button2.place(x= 390, y= 300)
 
-        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
+        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
         button3 = tk.Button(self, image=btn_stop,command=mode_stop)
         button3.image = btn_stop
         button3.place(x= 490, y= 300)
@@ -204,22 +202,22 @@ class go_701_mode():
 class Page702(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/7027.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/7027.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 590, y= 300)
 
-        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_702_mode)
         button2.image = btn_play
         button2.place(x= 390, y= 300)
 
-        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
+        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
         button3 = tk.Button(self, image=btn_stop,command=mode_stop)
         button3.image = btn_stop
         button3.place(x= 490, y= 300)
@@ -233,22 +231,22 @@ class go_702_mode():
 class Page703(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/7037.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/7037.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 590, y= 300)
 
-        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_703_mode)
         button2.image = btn_play
         button2.place(x= 390, y= 300)
 
-        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
+        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
         button3 = tk.Button(self, image=btn_stop,command=mode_stop)
         button3.image = btn_stop
         button3.place(x= 490, y= 300)
@@ -262,22 +260,22 @@ class go_703_mode():
 class Page704(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/7047.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/7047.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 590, y= 300)
 
-        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_704_mode)
         button2.image = btn_play
         button2.place(x= 390, y= 300)
 
-        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
+        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
         button3 = tk.Button(self, image=btn_stop,command=mode_stop)
         button3.image = btn_stop
         button3.place(x= 490, y= 300)
@@ -291,22 +289,22 @@ class go_704_mode():
 class Page705(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/7057.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/7057.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 590, y= 300)
 
-        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_705_mode)
         button2.image = btn_play
         button2.place(x= 390, y= 300)
 
-        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
+        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
         button3 = tk.Button(self, image=btn_stop,command=mode_stop)
         button3.image = btn_stop
         button3.place(x= 490, y= 300)
@@ -320,22 +318,22 @@ class go_705_mode():
 class Page706(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/7067.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/7067.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 590, y= 300)
 
-        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_706_mode)
         button2.image = btn_play
         button2.place(x= 390, y= 300)
 
-        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
+        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
         button3 = tk.Button(self, image=btn_stop,command=mode_stop)
         button3.image = btn_stop
         button3.place(x= 490, y= 300)
@@ -349,22 +347,22 @@ class go_706_mode():
 class Page707(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/7077.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/7077.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 590, y= 300)
 
-        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_707_mode)
         button2.image = btn_play
         button2.place(x= 390, y= 300)
 
-        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
+        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
         button3 = tk.Button(self, image=btn_stop,command=mode_stop)
         button3.image = btn_stop
         button3.place(x= 490, y= 300)
@@ -378,22 +376,22 @@ class go_707_mode():
 class Page708(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/7087.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/7087.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 590, y= 300)
 
-        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_708_mode)
         button2.image = btn_play
         button2.place(x= 390, y= 300)
 
-        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
+        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
         button3 = tk.Button(self, image=btn_stop,command=mode_stop)
         button3.image = btn_stop
         button3.place(x= 490, y= 300)
@@ -407,22 +405,22 @@ class go_708_mode():
 class Page709(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/7097.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/7097.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
 
-        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
+        btn_back = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/back.png') 
         button1 = tk.Button(self, image=btn_back, command=lambda: controller.show_frame(Page4))
         button1.image = btn_back
         button1.place(x= 590, y= 300)
 
-        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
+        btn_play = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/play.png') 
         button2 = tk.Button(self, image=btn_play, command=go_709_mode)
         button2.image = btn_play
         button2.place(x= 390, y= 300)
 
-        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
+        btn_stop = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/stop.png') 
         button3 = tk.Button(self, image=btn_stop,command=mode_stop)
         button3.image = btn_stop
         button3.place(x= 490, y= 300)
@@ -437,7 +435,7 @@ class Page5(tk.Frame):
     def __init__(self, parent, controller):
         tk.Tk.flag =0
         tk.Frame.__init__(self, parent)
-        img = PhotoImage(file='/home/taehyung/catkin_ws/src/wheelchair/ros_auto_wheelchair/wheelchair_lcd/image/Page57.png') 
+        img = PhotoImage(file='/home/taehyung/catkin_ws/src/ros_auto_wheelchair/wheelchair_lcd/image/Page57.png') 
         lbl = Label(self, image=img)
         lbl.image = img
         lbl.pack(padx=0, pady=0)
@@ -466,14 +464,15 @@ class click_F():
     def __init__(self):
         tk.Tk.flag =8
         print(tk.Tk.flag)
-        # door_request_srv.door_req_flag =  True
-        # door_request_srv.door_mode = 1
-        # door_request_srv.sub_door_mode = 3
-        # result = door_client(door_request_srv)
-        # if result == True:
-        #     msg = tkinter.messagebox.showinfo("정보 메시지", "앞쪽 선택")
-        # else:
-        #     msg = tkinter.messagebox.showinfo("정보 메시지", "문 통과불가")
+        door_request_srv.door_req_flag = True
+        door_request_srv.door_mode = 1
+        door_request_srv.sub_door_mode = 3
+        result = door_client(door_request_srv)
+        print(result)
+        if result.door_res_flag == True:
+         msg = tkinter.messagebox.showinfo("정보 메시지", "앞쪽 선택")
+        else:
+         msg = tkinter.messagebox.showinfo("정보 메시지", "문통과불가")
 class click_M():
     def __init__(self):
         tk.Tk.flag =9
@@ -487,9 +486,11 @@ class click_R():
 
 app=wheelchairapp()
 
-# rospy.wait_for_service('/door_service_scan')
-# door_client = rospy.ServiceProxy('/door_service_scan',door_mode)
-# door_request_srv = door_modeRequest()
+rospy.wait_for_service('/door_service_scan')
+door_client = rospy.ServiceProxy('/door_service_scan',door_mode)
+door_request_srv = door_modeRequest()
 
-# rospy.init_node('wheelchar_lcd', anonymous=True)
+rospy.init_node('wheelchar_lcd', anonymous=True)
 app.mainloop()
+
+
